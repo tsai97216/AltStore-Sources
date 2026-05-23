@@ -6,31 +6,7 @@
   "description": "這是 Chi 維護的個人來源，目前專注於提供 PiliPlus 的穩定更新。",
   "website": "https://github.com/tsai97216/My-AltStore-Source",
   "iconURL": "https://raw.githubusercontent.com/tsai97216/My-AltStore-Source/main/source_icon.PNG",
-  "featuredApps": [
-    "com.bgg.piliplus"
-  ],
-  "apps": [
-    {
-      "name": "PiliPlus",
-      "bundleIdentifier": "com.bgg.piliplus",
-      "developerName": "bggRGjQaUbCoE",
-      "subtitle": "第三方 Bilibili iOS 客戶端增強版",
-      "localizedDescription": "PiliPlus 提供自動全螢幕、音量均衡、彈幕過濾等豐富功能，帶給你更純粹的觀影體驗。",
-      "iconURL": "https://raw.githubusercontent.com/bggRGjQaUbCoE/PiliPlus/main/assets/images/logo/desktop/logo_large.png",
-      "tintColor": "7DCEA0",
-      "category": "entertainment",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "2.0.7.2",
-          "date": "2026-05-15",
-          "localizedDescription": "修复 #2075 #2087\r\n其他调整 #2100 by @My-Responsitories\r\n定时发布动态不立即检查是否可见 #2059 by @uhiovk",
-          "downloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.0.7.2/PiliPlus_ios_2.0.7%2B4956.ipa",
-          "size": 23837357,
-          "sha1hash": "1221b912e212df9f4d2adefe7dcfd80906a4ff74"
-        }
-      ]
-    }
-  ],
+  "featuredApps": [],
+  "apps": [],
   "news": []
 }
