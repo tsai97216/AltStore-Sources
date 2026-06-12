@@ -17,7 +17,7 @@ SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/My-AltSto
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # =========================
-# 📦 本地 GitHub Apps
+# 📦 GitHub Apps
 # =========================
 LOCAL_APPS = [
     {
@@ -41,7 +41,7 @@ LOCAL_APPS = [
 ]
 
 # =========================
-# 🌐 AppTesters source
+# 🌐 AppTesters
 # =========================
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 TARGET_APPS = {"Facebook", "Threads"}
@@ -81,7 +81,7 @@ def pick_latest(apps):
         if key not in merged:
             merged[key] = app
         else:
-            old_v = merged[key]["versions"][0].get("version", "0.0.0")
+            old_v = merged[key].get("versions", [{}])[0].get("version", "0.0.0")
 
             try:
                 old_parsed = version.parse(old_v)
@@ -92,6 +92,17 @@ def pick_latest(apps):
                 merged[key] = app
 
     return list(merged.values())
+
+# =========================
+# 🧼 FINAL DEDUPE (超重要)
+# =========================
+def dedupe_final(apps):
+    seen = {}
+    for a in apps:
+        key = a.get("bundleIdentifier")
+        if key:
+            seen[key] = a
+    return list(seen.values())
 
 # =========================
 # 🐙 GitHub builder
@@ -173,18 +184,24 @@ def update_source():
     # -------------------------
     remote = fetch_remote()
     remote = filter_remote(remote)
-
-    # 🔥 核心修復：只留最新版本
     remote = pick_latest(remote)
-
-    print(f"📦 AppTesters final: {len(remote)}")
 
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
-    # -------------------------
-    # 3. source JSON
-    # -------------------------
+    # =========================
+    # 🔥 FINAL CLEAN STEP
+    # =========================
+    apps_list = dedupe_final(apps_list)
+
+    # =========================
+    # featuredApps 去重
+    # =========================
+    featured = list({a["bundleIdentifier"] for a in apps_list})
+
+    # =========================
+    # OUTPUT
+    # =========================
     source_data = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -193,7 +210,7 @@ def update_source():
         "description": f"{DISPLAY_NAME} auto curated source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
         "iconURL": SOURCE_ICON_URL,
-        "featuredApps": [a["bundleIdentifier"] for a in apps_list],
+        "featuredApps": featured,
         "apps": apps_list,
         "news": []
     }
@@ -203,8 +220,5 @@ def update_source():
 
     print("🎉 Chi Source 更新完成")
 
-# =========================
-# ▶️ run
-# =========================
 if __name__ == "__main__":
     update_source()
