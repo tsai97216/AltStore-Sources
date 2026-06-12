@@ -1,9 +1,10 @@
 import os
 import json
 import requests
+from packaging import version
 
 # =========================
-# 🌙 Chi Source 基本設定
+# 🌙 Chi Source 設定
 # =========================
 FILENAME = "apps.json"
 
@@ -29,8 +30,7 @@ LOCAL_APPS = [
         "icon": "https://raw.githubusercontent.com/bggRGjQaUbCoE/PiliPlus/main/assets/images/logo/desktop/logo_large.png",
         "subtitle": "第三方 Bilibili 客戶端",
         "desc": "提供自動全螢幕、音量均衡、彈幕過濾等功能。",
-        "color": "7DCEA0",
-        "source_type": "github"
+        "color": "7DCEA0"
     },
     {
         "repo": "Mark02-2012/YTPlusM",
@@ -39,8 +39,7 @@ LOCAL_APPS = [
         "icon": "https://raw.githubusercontent.com/Mark02-2012/YTPlusM/main/Resources/IMG_5913.png",
         "subtitle": "YouTube 修改版",
         "desc": "提供去廣告、播放優化與額外功能。",
-        "color": "FF4D4D",
-        "source_type": "github"
+        "color": "FF4D4D"
     }
 ]
 
@@ -52,7 +51,7 @@ SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_R
 TARGET_APPS = {"Facebook", "Threads"}
 
 # =========================
-# 📡 讀遠端 source
+# 📡 讀 remote
 # =========================
 def fetch_remote():
     r = requests.get(SOURCE_DATA_URL)
@@ -60,10 +59,38 @@ def fetch_remote():
     return r.json()["apps"]
 
 # =========================
-# 🔍 篩選遠端 app
+# 🔍 篩選目標 app
 # =========================
 def filter_remote(apps):
-    return [a for a in apps if a.get("name") in TARGET_APPS]
+    return [
+        a for a in apps
+        if a.get("name") in TARGET_APPS
+    ]
+
+# =========================
+# 🧠 合併同 bundleID + 只留最新版本
+# =========================
+def merge_latest(apps):
+    merged = {}
+
+    for app in apps:
+        key = app.get("bundleIdentifier")
+
+        # 取版本
+        try:
+            v = version.parse(app["versions"][0]["version"])
+        except:
+            v = version.parse("0")
+
+        if key not in merged:
+            merged[key] = app
+        else:
+            old_v = version.parse(merged[key]["versions"][0]["version"])
+
+            if v > old_v:
+                merged[key] = app
+
+    return list(merged.values())
 
 # =========================
 # 🐙 GitHub builder
@@ -105,7 +132,7 @@ def build_from_github(app):
 def build_from_apptesters(app):
     return {
         "name": app["name"],
-        "bundleIdentifier": app.get("bundleID") or app.get("bundleIdentifier"),
+        "bundleIdentifier": app.get("bundleIdentifier"),
         "developerName": "AppTesters",
         "subtitle": "Imported from AppTesters",
         "localizedDescription": app.get("localizedDescription", ""),
@@ -115,11 +142,11 @@ def build_from_apptesters(app):
         "screenshots": [],
         "versions": [
             {
-                "version": app.get("version", ""),
-                "date": app.get("versionDate", ""),
+                "version": app.get("versions", [{}])[0].get("version", ""),
+                "date": app.get("versions", [{}])[0].get("date", ""),
                 "localizedDescription": app.get("localizedDescription", ""),
-                "downloadURL": app.get("downloadURL") or app.get("down"),
-                "size": app.get("size", 0),
+                "downloadURL": app.get("versions", [{}])[0].get("downloadURL"),
+                "size": app.get("versions", [{}])[0].get("size", 0),
             }
         ]
     }
@@ -136,19 +163,20 @@ def update_source():
     # 1️⃣ 本地 GitHub apps
     # -------------------------
     for app in LOCAL_APPS:
-        if app["source_type"] == "github":
-            apps_list.append(build_from_github(app))
+        apps_list.append(build_from_github(app))
 
     # -------------------------
-    # 2️⃣ AppTesters apps
+    # 2️⃣ remote apps
     # -------------------------
-    remote_apps = filter_remote(fetch_remote())
+    remote = fetch_remote()
+    remote = filter_remote(remote)
+    remote = merge_latest(remote)
 
-    for app in remote_apps:
+    for app in remote:
         apps_list.append(build_from_apptesters(app))
 
     # -------------------------
-    # 3️⃣ 組 source
+    # 3️⃣ source 組裝
     # -------------------------
     source_data = {
         "name": DISPLAY_NAME,
