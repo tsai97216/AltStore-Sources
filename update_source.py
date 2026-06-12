@@ -1,7 +1,6 @@
 import os
 import json
 import requests
-from packaging import version
 
 # =========================
 # 🌙 Chi Source 設定
@@ -41,7 +40,7 @@ LOCAL_APPS = [
 ]
 
 # =========================
-# 🌐 AppTesters source
+# 🌐 AppTesters
 # =========================
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 TARGET_APPS = {"Facebook", "Threads"}
@@ -55,38 +54,31 @@ def fetch_remote():
     return r.json().get("apps", [])
 
 # =========================
-# 🔍 filter target apps
+# 🔍 filter target apps（放寬）
 # =========================
 def filter_remote(apps):
     return [
         a for a in apps
-        if a.get("name") in TARGET_APPS
+        if any(t in a.get("name", "") for t in TARGET_APPS)
     ]
 
 # =========================
-# 🧼 validate app（重點）
+# 🧠 version parser（核心修復）
 # =========================
-def is_valid_app(app):
+def parse_version(v):
     try:
-        v = app.get("versions", [{}])[0]
-        return (
-            v.get("version") not in [None, "", " "]
-            and v.get("downloadURL") not in [None, "", " "]
-        )
+        return tuple(int(x) for x in v.split("."))
     except:
-        return False
+        return (0, 0, 0)
 
-# =========================
-# 🧠 safe version extract
-# =========================
 def safe_version(app):
     try:
-        return app.get("versions", [{}])[0].get("version", "0")
+        return app.get("versions", [{}])[0].get("version", "0.0.0")
     except:
-        return "0"
+        return "0.0.0"
 
 # =========================
-# 🧠 merge latest (safe)
+# 🧠 merge latest（真正正確版本）
 # =========================
 def merge_latest(apps):
     merged = {}
@@ -96,16 +88,27 @@ def merge_latest(apps):
         if not key:
             continue
 
-        v = version.parse(safe_version(app))
+        v = parse_version(safe_version(app))
 
         if key not in merged:
             merged[key] = app
         else:
-            old_v = version.parse(safe_version(merged[key]))
+            old_v = parse_version(safe_version(merged[key]))
+
             if v > old_v:
                 merged[key] = app
 
     return list(merged.values())
+
+# =========================
+# 🔥 validate（防壞資料）
+# =========================
+def is_valid_app(app):
+    v = app.get("versions", [{}])[0]
+    return (
+        v.get("version") not in [None, "", " "]
+        and v.get("downloadURL") not in [None, "", " "]
+    )
 
 # =========================
 # 🐙 GitHub builder
@@ -159,7 +162,7 @@ def build_from_apptesters(app):
         "screenshots": [],
         "versions": [
             {
-                "version": v.get("version", ""),
+                "version": v.get("version", "0.0.0"),
                 "date": v.get("date", ""),
                 "localizedDescription": app.get("localizedDescription", ""),
                 "downloadURL": v.get("downloadURL"),
@@ -188,17 +191,14 @@ def update_source():
     remote = fetch_remote()
     remote = filter_remote(remote)
 
-    # ❗ 先轉乾淨格式
     remote = [a for a in remote if is_valid_app(a)]
-
-    # ❗ 再 merge 最新版本
     remote = merge_latest(remote)
 
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
     # ---------------------
-    # output source
+    # output
     # ---------------------
     source_data = {
         "name": DISPLAY_NAME,
