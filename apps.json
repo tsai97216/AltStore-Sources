@@ -7,10 +7,8 @@
   "website": "https://github.com/tsai97216/My-AltStore-Source",
   "iconURL": "https://raw.githubusercontent.com/tsai97216/My-AltStore-Source/main/source_icon.PNG",
   "featuredApps": [
-    "com.burbn.barcelona",
-    "com.bgg.piliplus",
-    "com.facebook.Facebook",
-    "com.mark.ytplusm"
+    "com.mark.ytplusm",
+    "com.bgg.piliplus"
   ],
   "apps": [
     {
@@ -50,46 +48,6 @@
           "localizedDescription": "## YTPlusM release info\r\n- **YT version:** `21.22.4`\r\n- **YTLite:** `5.2.1` *(5.2.1 always the cracked version)*\r\n- **iOS 16+**\r\n## Must read:\r\n- Releases named **YTPlus** are releases with only YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent.\r\n- Releases named **YTPlusM** have got YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent **but also the extra YTPlusM tweaks** \r\n(YTweaks, Gonerino, YouSpeed, YTLowContrastMode, VolumeBoostYT, YouGetCaption). \r\n",
           "downloadURL": "https://github.com/Mark02-2012/YTPlusM/releases/download/5.2.1_21.22.4%2886%29/YTPlusM_21.22.4_5.2.1.ipa",
           "size": 132315084
-        }
-      ]
-    },
-    {
-      "name": "Threads",
-      "bundleIdentifier": "com.burbn.barcelona",
-      "developerName": "AppTesters",
-      "subtitle": "Imported from AppTesters",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.burbn.barcelona.png",
-      "tintColor": null,
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "",
-          "date": "",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": null,
-          "size": 0
-        }
-      ]
-    },
-    {
-      "name": "Facebook",
-      "bundleIdentifier": "com.facebook.Facebook",
-      "developerName": "AppTesters",
-      "subtitle": "Imported from AppTesters",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.facebook.Facebook.png",
-      "tintColor": null,
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "",
-          "date": "",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": null,
-          "size": 0
         }
       ]
     }
