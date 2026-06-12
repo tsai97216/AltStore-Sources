@@ -14,13 +14,10 @@ DISPLAY_NAME = "Chi Source"
 SOURCE_URL = f"https://{YOUR_GITHUB_ID}.github.io/My-AltStore-Source/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/My-AltStore-Source/main/source_icon.PNG"
 
-# =========================
-# 🔐 Token
-# =========================
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # =========================
-# 📦 本地 GitHub Apps
+# 📦 GitHub Apps
 # =========================
 LOCAL_APPS = [
     {
@@ -44,13 +41,13 @@ LOCAL_APPS = [
 ]
 
 # =========================
-# 🌐 AppTesters source
+# 🌐 AppTesters
 # =========================
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 TARGET_APPS = {"Facebook", "Threads"}
 
 # =========================
-# 📡 讀遠端 source
+# 📡 fetch remote
 # =========================
 def fetch_remote():
     r = requests.get(SOURCE_DATA_URL)
@@ -58,8 +55,20 @@ def fetch_remote():
     return r.json()["apps"]
 
 # =========================
-# 🔥 只保留每個 app 最新版本
+# 🔥 version helper
 # =========================
+def get_version(app):
+    v = app.get("version")
+    if v:
+        return v
+
+    versions = app.get("versions") or []
+    if versions:
+        return versions[0].get("version", "0.0.0")
+
+    return "0.0.0"
+
+
 def keep_latest_only(apps):
     latest = {}
 
@@ -68,13 +77,13 @@ def keep_latest_only(apps):
         if not bid:
             continue
 
-        ver = app.get("version", "0.0.0")
+        ver = get_version(app)
 
         if bid not in latest:
             latest[bid] = app
             continue
 
-        old_ver = latest[bid].get("version", "0.0.0")
+        old_ver = get_version(latest[bid])
 
         try:
             if pkg_version.parse(ver) > pkg_version.parse(old_ver):
@@ -104,7 +113,7 @@ def build_from_github(app):
         "subtitle": app["subtitle"],
         "localizedDescription": app["desc"],
         "iconURL": app["icon"],
-        "tintColor": app["color"],
+        "tintColor": app.get("color"),
         "category": "entertainment",
         "screenshots": [],
         "versions": [
@@ -119,17 +128,29 @@ def build_from_github(app):
     }
 
 # =========================
-# 🌐 AppTesters builder
+# 🌐 AppTesters builder（已改色 + subtitle）
 # =========================
 def build_from_apptesters(app):
+    name = app["name"]
+
+    if name == "Facebook":
+        tint = "4A90E2"
+        subtitle = "Facebook修改版"
+    elif name == "Threads":
+        tint = "2E2E2E"
+        subtitle = "Threads修改版"
+    else:
+        tint = None
+        subtitle = "Imported from AppTesters"
+
     return {
-        "name": app["name"],
+        "name": name,
         "bundleIdentifier": app.get("bundleIdentifier"),
         "developerName": "AppTesters",
-        "subtitle": "Imported from AppTesters",
+        "subtitle": subtitle,
         "localizedDescription": app.get("localizedDescription", ""),
         "iconURL": app.get("iconURL") or app.get("icon"),
-        "tintColor": None,
+        "tintColor": tint,
         "category": "social",
         "screenshots": [],
         "versions": [
@@ -144,29 +165,26 @@ def build_from_apptesters(app):
     }
 
 # =========================
-# 🚀 主流程
+# 🚀 main
 # =========================
 def update_source():
     print(f"🚀 正在更新 {DISPLAY_NAME}...")
 
     apps_list = []
 
-    # 1️⃣ GitHub apps
+    # GitHub apps
     for app in LOCAL_APPS:
         apps_list.append(build_from_github(app))
 
-    # 2️⃣ AppTesters apps（先抓）
+    # AppTesters apps
     remote = fetch_remote()
     remote = [a for a in remote if a.get("name") in TARGET_APPS]
-
-    # ⭐ 關鍵：先去重，只留最新版本
     remote = keep_latest_only(remote)
 
-    # 3️⃣ 再轉格式
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
-    # 4️⃣ source 組裝
+    # source
     source_data = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -185,8 +203,5 @@ def update_source():
 
     print("🎉 Chi Source 更新完成")
 
-# =========================
-# ▶️ run
-# =========================
 if __name__ == "__main__":
     update_source()
