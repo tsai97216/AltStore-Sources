@@ -14,13 +14,10 @@ DISPLAY_NAME = "Chi Source"
 SOURCE_URL = f"https://{YOUR_GITHUB_ID}.github.io/My-AltStore-Source/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/My-AltStore-Source/main/source_icon.PNG"
 
-# =========================
-# 🔐 Token
-# =========================
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # =========================
-# 📦 本地 GitHub Apps
+# 📦 GitHub Apps
 # =========================
 LOCAL_APPS = [
     {
@@ -44,14 +41,13 @@ LOCAL_APPS = [
 ]
 
 # =========================
-# 🌐 AppTesters source
+# 🌐 AppTesters
 # =========================
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
-
 TARGET_APPS = {"Facebook", "Threads"}
 
 # =========================
-# 📡 讀 remote
+# 📡 fetch remote
 # =========================
 def fetch_remote():
     r = requests.get(SOURCE_DATA_URL)
@@ -59,7 +55,7 @@ def fetch_remote():
     return r.json()["apps"]
 
 # =========================
-# 🔍 篩選目標 app
+# 🔍 filter target apps
 # =========================
 def filter_remote(apps):
     return [
@@ -68,29 +64,47 @@ def filter_remote(apps):
     ]
 
 # =========================
-# 🧠 合併同 bundleID + 只留最新版本
+# 🧼 normalize（關鍵修復）
+# =========================
+def normalize_app(app):
+    """統一成安全格式，避免 KeyError"""
+    v = ""
+
+    try:
+        v = app.get("versions", [{}])[0].get("version", "")
+    except:
+        v = ""
+
+    return {
+        "name": app.get("name"),
+        "bundleIdentifier": app.get("bundleIdentifier"),
+        "version": v or "0",
+        "raw": app
+    }
+
+# =========================
+# 🧠 merge latest
 # =========================
 def merge_latest(apps):
     merged = {}
 
     for app in apps:
         key = app.get("bundleIdentifier")
+        if not key:
+            continue
 
-        # 取版本
-        try:
-            v = version.parse(app["versions"][0]["version"])
-        except:
-            v = version.parse("0")
+        v = version.parse(app.get("version", "0"))
 
         if key not in merged:
             merged[key] = app
         else:
-            old_v = version.parse(merged[key]["versions"][0]["version"])
+            old_v = version.parse(merged[key].get("version", "0"))
 
             if v > old_v:
                 merged[key] = app
 
-    return list(merged.values())
+    # 還原 raw
+    return [a["raw"] for a in merged.values()]
 
 # =========================
 # 🐙 GitHub builder
@@ -130,8 +144,10 @@ def build_from_github(app):
 # 🌐 AppTesters builder
 # =========================
 def build_from_apptesters(app):
+    v = app.get("versions", [{}])[0]
+
     return {
-        "name": app["name"],
+        "name": app.get("name"),
         "bundleIdentifier": app.get("bundleIdentifier"),
         "developerName": "AppTesters",
         "subtitle": "Imported from AppTesters",
@@ -142,42 +158,47 @@ def build_from_apptesters(app):
         "screenshots": [],
         "versions": [
             {
-                "version": app.get("versions", [{}])[0].get("version", ""),
-                "date": app.get("versions", [{}])[0].get("date", ""),
+                "version": v.get("version", ""),
+                "date": v.get("date", ""),
                 "localizedDescription": app.get("localizedDescription", ""),
-                "downloadURL": app.get("versions", [{}])[0].get("downloadURL"),
-                "size": app.get("versions", [{}])[0].get("size", 0),
+                "downloadURL": v.get("downloadURL"),
+                "size": v.get("size", 0),
             }
         ]
     }
 
 # =========================
-# 🚀 主流程
+# 🚀 main
 # =========================
 def update_source():
     print(f"🚀 正在更新 {DISPLAY_NAME}...")
 
     apps_list = []
 
-    # -------------------------
-    # 1️⃣ 本地 GitHub apps
-    # -------------------------
+    # -----------------
+    # GitHub apps
+    # -----------------
     for app in LOCAL_APPS:
         apps_list.append(build_from_github(app))
 
-    # -------------------------
-    # 2️⃣ remote apps
-    # -------------------------
+    # -----------------
+    # AppTesters apps
+    # -----------------
     remote = fetch_remote()
     remote = filter_remote(remote)
+
+    # 🔥 normalize（避免 KeyError）
+    remote = [normalize_app(a) for a in remote]
+
+    # 🔥 merge latest
     remote = merge_latest(remote)
 
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
-    # -------------------------
-    # 3️⃣ source 組裝
-    # -------------------------
+    # -----------------
+    # source output
+    # -----------------
     source_data = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -196,8 +217,5 @@ def update_source():
 
     print("🎉 Chi Source 更新完成")
 
-# =========================
-# ▶️ run
-# =========================
 if __name__ == "__main__":
     update_source()
