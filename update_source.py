@@ -36,7 +36,7 @@ LOCAL_APPS = [
         "icon": "https://raw.githubusercontent.com/Mark02-2012/YTPlusM/main/Resources/IMG_5913.png",
         "subtitle": "YouTube 修改版",
         "desc": "提供去廣告、播放優化與額外功能。",
-        "color": "FF0033",
+        "color": "FF4D4D",
     }
 ]
 
