@@ -80,10 +80,10 @@
       "name": "YouTubeMusic",
       "bundleIdentifier": "com.google.ios.youtubemusic",
       "developerName": "AppTesters",
-      "subtitle": "Imported from AppTesters",
+      "subtitle": "YouTube Music修改版",
       "localizedDescription": "Injected with Premium",
       "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.google.ios.youtubemusic.png",
-      "tintColor": null,
+      "tintColor": "FF0033",
       "category": "social",
       "screenshots": [],
       "versions": [
