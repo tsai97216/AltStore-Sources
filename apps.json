@@ -10,6 +10,7 @@
     "com.bgg.piliplus",
     "com.mark.ytplusm",
     "com.spotify.client",
+    "com.google.ios.youtubemusic",
     "com.burbn.instagram",
     "com.burbn.barcelona",
     "com.facebook.Facebook"
@@ -72,6 +73,26 @@
           "localizedDescription": "Injected with Premium",
           "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/12-06-2026/EeveeSpotify_9.1.50_Premium_%40thisismanpreets_apptesters.org.ipa",
           "size": 116334923
+        }
+      ]
+    },
+    {
+      "name": "YouTubeMusic",
+      "bundleIdentifier": "com.google.ios.youtubemusic",
+      "developerName": "AppTesters",
+      "subtitle": "Imported from AppTesters",
+      "localizedDescription": "Injected with Premium",
+      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.google.ios.youtubemusic.png",
+      "tintColor": null,
+      "category": "social",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "9.23.4",
+          "date": "2026-06-10",
+          "localizedDescription": "Injected with Premium",
+          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/YouTubeMusic_9.23.4_Premium_%40thisismanpreets_apptesters.org.ipa",
+          "size": 97391322
         }
       ]
     },
