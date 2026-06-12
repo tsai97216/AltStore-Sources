@@ -73,7 +73,7 @@ APP_STYLE = {
         "color": "1DB954",
         "subtitle": "Spotify修改版"
     },
-    "YouTube Music": {
+    "YouTubeMusic": {
         "color": "FF0033",
         "subtitle": "YouTube Music修改版"
     }
