@@ -28,7 +28,7 @@ APPS = [
         "name": "PiliPlus",
         "bundleID": "com.bgg.piliplus",
         "icon": "https://raw.githubusercontent.com/bggRGjQaUbCoE/PiliPlus/main/assets/images/logo/desktop/logo_large.png",
-        "subtitle": "第三方 Bilibili iOS 客戶端增強版",
+        "subtitle": "第三方 Bilibili 客戶端",
         "desc": "提供自動全螢幕、音量均衡、彈幕過濾等功能。"
     },
     {
@@ -125,7 +125,7 @@ def update_source():
         "name": f"{DISPLAY_NAME}",
         "identifier": f"com.{DISPLAY_NAME.lower()}.custom.source",
         "sourceURL": SOURCE_URL,
-        "subtitle": "精選 iOS 增強版 App",
+        "subtitle": "iOS 修改版 Ipa",
         "description": f"{DISPLAY_NAME} 自動維護的 IPA Source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
         "iconURL": SOURCE_ICON_URL,
@@ -137,7 +137,7 @@ def update_source():
     with open(FILENAME, "w", encoding="utf-8") as f:
         json.dump(source_data, f, indent=2, ensure_ascii=False)
 
-    print("🎉 ChiSource 更新完成")
+    print("🎉 Chi Source 更新完成")
 
 
 if __name__ == "__main__":
