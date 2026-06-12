@@ -10,7 +10,7 @@ GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 FILENAME = "apps.json"
 
 YOUR_GITHUB_ID = "tsai97216"
-DISPLAY_NAME = "ChiSource"
+DISPLAY_NAME = "Chi Source"
 
 SOURCE_URL = f"https://{YOUR_GITHUB_ID}.github.io/My-AltStore-Source/{FILENAME}"
 
