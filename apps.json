@@ -28,11 +28,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "",
-          "date": "",
-          "localizedDescription": "",
-          "downloadURL": "",
-          "size": 0
+          "version": "2.0.9.2",
+          "date": "2026-06-13",
+          "localizedDescription": "修复 bug\r\n其他调整 #2404 by @My-Responsitories",
+          "downloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.0.9.2/PiliPlus_ios_2.0.9%2B5051.ipa",
+          "size": 23393835
         }
       ]
     },
@@ -48,9 +48,9 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "",
-          "date": "",
-          "localizedDescription": "",
+          "version": "5.2.1_21.24.3(95)",
+          "date": "2026-06-14",
+          "localizedDescription": "## YTPlusM release info\r\n- **YT version:** `21.24.3`\r\n- **YTLite:** `5.2.1` *(5.2.1 always the cracked version)*\r\n- **iOS 16+**\r\n## Must read:\r\n- Releases named **YTPlus** are releases with only YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent.\r\n- Releases named **YTPlusM** have got YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent **but also the extra YTPlusM tweaks** \r\n(YTweaks, Gonerino, YouSpeed, YTLowContrastMode, VolumeBoostYT, YouGetCaption). \r\n\r\n**Fun fact**: this is the last pre-built release that I published here😢\r\n",
           "downloadURL": "",
           "size": 0
         }
