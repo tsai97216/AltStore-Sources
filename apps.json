@@ -1,119 +1,182 @@
-{
-  "name": "Chi Sources",
-  "identifier": "com.chisources.source",
-  "sourceURL": "https://tsai97216.github.io/My-AltStore-Source/apps.json",
-  "subtitle": "iOS IPA Source",
-  "description": "Chi Sources auto curated source",
-  "website": "https://github.com/tsai97216/My-AltStore-Source",
-  "iconURL": "https://raw.githubusercontent.com/tsai97216/My-AltStore-Source/main/source_icon.PNG",
-  "featuredApps": [
-    "com.bgg.piliplus",
-    "com.spotify.client",
-    "com.burbn.instagram",
-    "com.burbn.barcelona",
-    "com.facebook.Facebook"
-  ],
-  "apps": [
-    {
-      "name": "PiliPlus",
-      "bundleIdentifier": "com.bgg.piliplus",
-      "developerName": "bggRGjQaUbCoE",
-      "subtitle": "第三方 Bilibili 客戶端",
-      "localizedDescription": "提供自動全螢幕、音量均衡、彈幕過濾等功能。",
-      "iconURL": "https://raw.githubusercontent.com/bggRGjQaUbCoE/PiliPlus/main/assets/images/logo/desktop/logo_large.png",
-      "tintColor": "7DCEA0",
-      "category": "entertainment",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "2.0.9.2",
-          "date": "2026-06-13",
-          "localizedDescription": "修复 bug\r\n其他调整 #2404 by @My-Responsitories",
-          "downloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.0.9.2/PiliPlus_ios_2.0.9%2B5051.ipa",
-          "size": 23393835
-        }
-      ]
-    },
-    {
-      "name": "EeveeSpotify",
-      "bundleIdentifier": "com.spotify.client",
-      "developerName": "AppTesters",
-      "subtitle": "Spotify修改版",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.spotify.client.png",
-      "tintColor": "1DB954",
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "9.1.56",
-          "date": "2026-06-16",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 118396730
-        }
-      ]
-    },
-    {
-      "name": "Instagram",
-      "bundleIdentifier": "com.burbn.instagram",
-      "developerName": "AppTesters",
-      "subtitle": "Instagram修改版",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.burbn.instagram.png",
-      "tintColor": "E4405F",
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "433.0.0",
-          "date": "2026-06-10",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/Instagram_433.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 282563167
-        }
-      ]
-    },
-    {
-      "name": "Threads",
-      "bundleIdentifier": "com.burbn.barcelona",
-      "developerName": "AppTesters",
-      "subtitle": "Threads修改版",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.burbn.barcelona.png",
-      "tintColor": "2D2D2D",
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "433.0.0",
-          "date": "2026-06-09",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/09-06-2026/Threads_433.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 89519163
-        }
-      ]
-    },
-    {
-      "name": "Facebook",
-      "bundleIdentifier": "com.facebook.Facebook",
-      "developerName": "AppTesters",
-      "subtitle": "Facebook修改版",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.facebook.Facebook.png",
-      "tintColor": "1877F2",
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "563.0.0",
-          "date": "2026-05-28",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/28-05-2026/Facebook_563.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 188549431
-        }
-      ]
-    }
-  ],
-  "news": []
+import os
+import json
+import requests
+from packaging import version as pkg_version
+
+# =========================
+# 🌙 Chi Sources 基本設定
+# =========================
+FILENAME = "apps.json"
+
+YOUR_GITHUB_ID = "tsai97216"
+DISPLAY_NAME = "Chi Sources"
+
+SOURCE_URL = f"https://{YOUR_GITHUB_ID}.github.io/My-AltStore-Source/{FILENAME}"
+SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/My-AltStore-Source/main/source_icon.PNG"
+
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
+# =========================
+# 🌐 YT repo
+# =========================
+YT_REPO = "https://repo.ballermc.com/repo.json"
+
+YT_STYLE = {
+    "YTPlusM": {"color": "FF4D4D", "subtitle": "YouTube 修改版"},
+    "YouTube Music Ultimate+": {"color": "FF4D4D", "subtitle": "YouTube Music 修改版"}
 }
+
+# =========================
+# 📡 fetch（加強 debug）
+# =========================
+def fetch_json(url):
+    try:
+        r = requests.get(url, timeout=15)
+        print(f"📡 GET {url} -> {r.status_code}")
+
+        if r.status_code != 200:
+            print(f"⚠️ fetch failed: {url}")
+            return None
+
+        try:
+            return r.json()
+        except Exception:
+            print("⚠️ JSON parse failed")
+            return None
+
+    except Exception as e:
+        print(f"⚠️ request error {url}: {e}")
+        return None
+
+
+# =========================
+# 🌐 YT repo loader（關鍵修復）
+# =========================
+def fetch_yt_repo():
+    data = fetch_json(YT_REPO)
+
+    if data is None:
+        print("❌ YT repo: None")
+        return []
+
+    # dict format
+    if isinstance(data, dict):
+        apps = data.get("apps", [])
+        print(f"📦 YT repo dict apps: {len(apps)}")
+        return apps if isinstance(apps, list) else []
+
+    # list format
+    if isinstance(data, list):
+        print(f"📦 YT repo list: {len(data)}")
+        return data
+
+    print("⚠️ YT repo unknown format:", type(data))
+    return []
+
+
+# =========================
+# 🔥 YT filter（修正核心）
+# =========================
+def match_yt(name):
+    name = (name or "").lower()
+    return any(k.lower() in name for k in YT_STYLE)
+
+
+# =========================
+# 🧠 YT builder（安全版）
+# =========================
+def build_from_yt(app):
+    if not isinstance(app, dict):
+        return None
+
+    name = app.get("name", "unknown")
+    style = next(
+        (v for k, v in YT_STYLE.items() if k.lower() in name.lower()),
+        {"color": None, "subtitle": "YouTube Mod"}
+    )
+
+    versions = app.get("versions") or []
+    v = versions[0] if isinstance(versions, list) and versions else {}
+
+    return {
+        "name": name,
+        "bundleIdentifier": app.get("bundleIdentifier"),
+        "developerName": "Ballermc",
+        "subtitle": style["subtitle"],
+        "localizedDescription": app.get("localizedDescription", ""),
+        "iconURL": app.get("iconURL"),
+        "tintColor": style["color"],
+        "category": "entertainment",
+        "screenshots": [],
+        "versions": [
+            {
+                "version": v.get("version", ""),
+                "date": (v.get("date") or "")[:10],
+                "localizedDescription": v.get("localizedDescription", ""),
+                "downloadURL": v.get("downloadURL", ""),
+                "size": v.get("size", 0),
+            }
+        ]
+    }
+
+
+# =========================
+# 🚀 main（重點 debug 區）
+# =========================
+def update_source():
+    print(f"🚀 正在更新 {DISPLAY_NAME}...")
+
+    apps_list = []
+
+    # =====================
+    # YT SECTION
+    # =====================
+    yt_raw = fetch_yt_repo()
+
+    print("🔍 YT RAW TYPE:", type(yt_raw))
+    print("🔍 YT RAW COUNT:", len(yt_raw))
+
+    yt_apps = [
+        a for a in yt_raw
+        if isinstance(a, dict) and match_yt(a.get("name"))
+    ]
+
+    print("🔍 YT FILTERED COUNT:", len(yt_apps))
+    print("🔍 YT NAMES:", [a.get("name") for a in yt_apps])
+
+    for app in yt_apps:
+        built = build_from_yt(app)
+        if built:
+            apps_list.append(built)
+
+    # =====================
+    # FINAL CHECK
+    # =====================
+    print("📦 TOTAL APPS:", len(apps_list))
+
+    # 👉 如果 YT 沒進來，直接報原因
+    if len(yt_apps) == 0:
+        print("❌ YT 沒有任何 app 通過 filter（名字 / fetch / 403 問題）")
+
+    # output file
+    source_data = {
+        "name": DISPLAY_NAME,
+        "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
+        "sourceURL": SOURCE_URL,
+        "subtitle": "iOS IPA Source",
+        "description": f"{DISPLAY_NAME} auto curated source",
+        "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
+        "iconURL": SOURCE_ICON_URL,
+        "featuredApps": [a["bundleIdentifier"] for a in apps_list if isinstance(a, dict)],
+        "apps": apps_list,
+        "news": []
+    }
+
+    with open(FILENAME, "w", encoding="utf-8") as f:
+        json.dump(source_data, f, indent=2, ensure_ascii=False)
+
+    print("🎉 完成更新")
+
+
+if __name__ == "__main__":
+    update_source()
