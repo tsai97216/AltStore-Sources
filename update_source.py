@@ -43,59 +43,56 @@ TARGET_APPS = {
     "EeveeSpotify"
 }
 
-# 刪除 YouTubeMusic（不再使用）
-
 # =========================
-# 🎨 AppTesters style
+# 🎨 AppStyle
 # =========================
 APP_STYLE = {
-    "Facebook": {
-        "color": "1877F2",
-        "subtitle": "Facebook修改版"
-    },
-    "Threads": {
-        "color": "2D2D2D",
-        "subtitle": "Threads修改版"
-    },
-    "Instagram": {
-        "color": "E4405F",
-        "subtitle": "Instagram修改版"
-    },
-    "EeveeSpotify": {
-        "color": "1DB954",
-        "subtitle": "Spotify修改版"
-    }
+    "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版"},
+    "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版"},
+    "Instagram": {"color": "E4405F", "subtitle": "Instagram修改版"},
+    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版"},
 }
 
 # =========================
-# 🌐 repo.ballermc.com
+# 🌐 YT REPO（重點修復）
 # =========================
-YT_REPO = "https://repo.ballermc.com/repo.json"
+YT_REPO_URL = "https://repo.ballermc.com/repo.json"
 
-YT_STYLE = {
-    "YTPlusM": {
-        "color": "FF4D4D",
-        "subtitle": "YouTube 修改版"
-    },
-    "YouTube Music Ultimate+": {
-        "color": "FF4D4D",
-        "subtitle": "YouTube Music修改版"
+def fetch_yt_repo():
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Accept": "application/json"
     }
-}
+
+    # 🧨 fallback（避免 403）
+    urls = [
+        YT_REPO_URL,
+        f"https://r.jina.ai/{YT_REPO_URL}"
+    ]
+
+    for url in urls:
+        try:
+            r = requests.get(url, headers=headers, timeout=10)
+            if r.status_code == 200:
+                data = r.json()
+                return data.get("apps", [])
+        except:
+            continue
+
+    print("⚠️ YT repo failed, skip")
+    return []
 
 # =========================
-# 📡 fetchers
+# 📡 fetch AppTesters
 # =========================
 def fetch_remote():
     r = requests.get(SOURCE_DATA_URL)
     r.raise_for_status()
     return r.json()["apps"]
 
-def fetch_yt_repo():
-    r = requests.get(YT_REPO)
-    r.raise_for_status()
-    return r.json().get("apps", [])
-
+# =========================
+# 🔥 version helper
+# =========================
 def get_version(app):
     v = app.get("version")
     if v:
@@ -106,6 +103,7 @@ def get_version(app):
         return versions[0].get("version", "0.0.0")
 
     return "0.0.0"
+
 
 def keep_latest_only(apps):
     latest = {}
@@ -205,11 +203,11 @@ def update_source():
 
     apps_list = []
 
-    # 1. GitHub
+    # GitHub apps
     for app in LOCAL_APPS:
         apps_list.append(build_from_github(app))
 
-    # 2. AppTesters（排除 YouTubeMusic）
+    # AppTesters apps
     remote = fetch_remote()
     remote = [a for a in remote if a.get("name") in TARGET_APPS]
     remote = keep_latest_only(remote)
@@ -217,15 +215,29 @@ def update_source():
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
-    # 3. YT repo（YTPlusM + YT Ultimate+）
+    # =========================
+    # ⭐ YTPlusM + YouTube Music Ultimate+
+    # =========================
     yt_apps = fetch_yt_repo()
+
+    yt_style = {
+        "YTPlusM": {
+            "color": "FF4D4D",
+            "subtitle": "YouTube 修改版"
+        },
+        "YouTube Music Ultimate+": {
+            "color": "FF4D4D",
+            "subtitle": "YouTube Music修改版"
+        }
+    }
 
     for app in yt_apps:
         name = app.get("name")
-        if name not in YT_STYLE:
+        if name not in yt_style:
             continue
 
-        style = YT_STYLE[name]
+        style = yt_style[name]
+        v = app.get("versions", [{}])[0]
 
         apps_list.append({
             "name": name,
@@ -239,11 +251,11 @@ def update_source():
             "screenshots": [],
             "versions": [
                 {
-                    "version": app["versions"][0].get("version", ""),
-                    "date": app["versions"][0].get("date", ""),
-                    "localizedDescription": app["versions"][0].get("localizedDescription", ""),
-                    "downloadURL": app["versions"][0].get("downloadURL", ""),
-                    "size": app["versions"][0].get("size", 0),
+                    "version": v.get("version", ""),
+                    "date": v.get("date", ""),
+                    "localizedDescription": v.get("localizedDescription", ""),
+                    "downloadURL": v.get("downloadURL", ""),
+                    "size": v.get("size", 0),
                 }
             ]
         })
