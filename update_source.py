@@ -28,15 +28,6 @@ LOCAL_APPS = [
         "subtitle": "第三方 Bilibili 客戶端",
         "desc": "提供自動全螢幕、音量均衡、彈幕過濾等功能。",
         "color": "7DCEA0",
-    },
-    {
-        "repo": "Mark02-2012/YTPlusM",
-        "name": "YTPlusM",
-        "bundleID": "com.mark.ytplusm",
-        "icon": "https://raw.githubusercontent.com/Mark02-2012/YTPlusM/main/Resources/IMG_5913.png",
-        "subtitle": "YouTube 修改版",
-        "desc": "提供去廣告、播放優化與額外功能。",
-        "color": "FF4D4D",
     }
 ]
 
@@ -49,12 +40,13 @@ TARGET_APPS = {
     "Facebook",
     "Threads",
     "Instagram",
-    "EeveeSpotify",
-    "YouTubeMusic"
+    "EeveeSpotify"
 }
 
+# 刪除 YouTubeMusic（不再使用）
+
 # =========================
-# 🎨 App 配色 + subtitle 規則
+# 🎨 AppTesters style
 # =========================
 APP_STYLE = {
     "Facebook": {
@@ -72,24 +64,38 @@ APP_STYLE = {
     "EeveeSpotify": {
         "color": "1DB954",
         "subtitle": "Spotify修改版"
+    }
+}
+
+# =========================
+# 🌐 repo.ballermc.com
+# =========================
+YT_REPO = "https://repo.ballermc.com/repo.json"
+
+YT_STYLE = {
+    "YTPlusM": {
+        "color": "FF4D4D",
+        "subtitle": "YouTube 修改版"
     },
-    "YouTubeMusic": {
+    "YouTube Music Ultimate+": {
         "color": "FF4D4D",
         "subtitle": "YouTube Music修改版"
     }
 }
 
 # =========================
-# 📡 fetch remote
+# 📡 fetchers
 # =========================
 def fetch_remote():
     r = requests.get(SOURCE_DATA_URL)
     r.raise_for_status()
     return r.json()["apps"]
 
-# =========================
-# 🔥 version helper
-# =========================
+def fetch_yt_repo():
+    r = requests.get(YT_REPO)
+    r.raise_for_status()
+    return r.json().get("apps", [])
+
 def get_version(app):
     v = app.get("version")
     if v:
@@ -100,7 +106,6 @@ def get_version(app):
         return versions[0].get("version", "0.0.0")
 
     return "0.0.0"
-
 
 def keep_latest_only(apps):
     latest = {}
@@ -146,7 +151,7 @@ def build_from_github(app):
         "subtitle": app["subtitle"],
         "localizedDescription": app["desc"],
         "iconURL": app["icon"],
-        "tintColor": app.get("color"),
+        "tintColor": app["color"],
         "category": "entertainment",
         "screenshots": [],
         "versions": [
@@ -161,7 +166,7 @@ def build_from_github(app):
     }
 
 # =========================
-# 🌐 AppTesters builder（重點更新）
+# 🌐 AppTesters builder
 # =========================
 def build_from_apptesters(app):
     name = app.get("name")
@@ -200,11 +205,11 @@ def update_source():
 
     apps_list = []
 
-    # GitHub apps
+    # 1. GitHub
     for app in LOCAL_APPS:
         apps_list.append(build_from_github(app))
 
-    # AppTesters apps
+    # 2. AppTesters（排除 YouTubeMusic）
     remote = fetch_remote()
     remote = [a for a in remote if a.get("name") in TARGET_APPS]
     remote = keep_latest_only(remote)
@@ -212,7 +217,40 @@ def update_source():
     for app in remote:
         apps_list.append(build_from_apptesters(app))
 
+    # 3. YT repo（YTPlusM + YT Ultimate+）
+    yt_apps = fetch_yt_repo()
+
+    for app in yt_apps:
+        name = app.get("name")
+        if name not in YT_STYLE:
+            continue
+
+        style = YT_STYLE[name]
+
+        apps_list.append({
+            "name": name,
+            "bundleIdentifier": app.get("bundleIdentifier"),
+            "developerName": app.get("developerName", "Ballermc"),
+            "subtitle": style["subtitle"],
+            "localizedDescription": app.get("localizedDescription", ""),
+            "iconURL": app.get("iconURL"),
+            "tintColor": style["color"],
+            "category": "entertainment",
+            "screenshots": [],
+            "versions": [
+                {
+                    "version": app["versions"][0].get("version", ""),
+                    "date": app["versions"][0].get("date", ""),
+                    "localizedDescription": app["versions"][0].get("localizedDescription", ""),
+                    "downloadURL": app["versions"][0].get("downloadURL", ""),
+                    "size": app["versions"][0].get("size", 0),
+                }
+            ]
+        })
+
+    # =========================
     # source
+    # =========================
     source_data = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -221,7 +259,7 @@ def update_source():
         "description": f"{DISPLAY_NAME} auto curated source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
         "iconURL": SOURCE_ICON_URL,
-        "featuredApps": [a["bundleIdentifier"] for a in apps_list],
+        "featuredApps": list({a["bundleIdentifier"] for a in apps_list}),
         "apps": apps_list,
         "news": []
     }
