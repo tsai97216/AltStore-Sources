@@ -32,7 +32,7 @@ LOCAL_APPS = [
 ]
 
 # =========================
-# 🌐 AppTesters（4個）
+# 🌐 AppTesters
 # =========================
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 
@@ -51,19 +51,13 @@ APP_STYLE = {
 }
 
 # =========================
-# 🌐 Ballermc repo（YT系）
+# 🌐 Ballermc repo
 # =========================
 YT_REPO = "https://repo.ballermc.com/repo.json"
 
 YT_STYLE = {
-    "YTPlusM": {
-        "color": "FF4D4D",
-        "subtitle": "YouTube 修改版"
-    },
-    "YouTube Music Ultimate+": {
-        "color": "FF4D4D",
-        "subtitle": "YouTube Music 修改版"
-    }
+    "YTPlusM": {"color": "FF4D4D", "subtitle": "YouTube 修改版"},
+    "YouTube Music Ultimate+": {"color": "FF4D4D", "subtitle": "YouTube Music 修改版"}
 }
 
 # =========================
@@ -71,36 +65,45 @@ YT_STYLE = {
 # =========================
 def fetch_json(url):
     try:
-        r = requests.get(url, timeout=10)
+        r = requests.get(url, timeout=15)
         if r.status_code != 200:
             print(f"⚠️ fetch failed {url}: {r.status_code}")
             return None
         return r.json()
-    except:
+    except Exception as e:
+        print(f"⚠️ fetch error {url}: {e}")
         return None
 
 
 def fetch_remote():
     data = fetch_json(SOURCE_DATA_URL)
-    return data["apps"] if data else []
+    return data.get("apps", []) if isinstance(data, dict) else []
 
 
 def fetch_yt_repo():
     data = fetch_json(YT_REPO)
-    if not data:
-        return []
-    return data.get("apps", [])
+
+    if isinstance(data, dict):
+        return data.get("apps", [])
+
+    if isinstance(data, list):
+        return data
+
+    return []
 
 # =========================
 # 🔥 version helper
 # =========================
 def get_version(app):
+    if not isinstance(app, dict):
+        return "0.0.0"
+
     v = app.get("version")
     if v:
         return v
 
     versions = app.get("versions") or []
-    if versions:
+    if versions and isinstance(versions, list):
         return versions[0].get("version", "0.0.0")
 
     return "0.0.0"
@@ -110,6 +113,9 @@ def keep_latest_only(apps):
     latest = {}
 
     for app in apps:
+        if not isinstance(app, dict):
+            continue
+
         bid = app.get("bundleIdentifier")
         if not bid:
             continue
@@ -140,8 +146,8 @@ def build_from_github(app):
     r = requests.get(url, headers=headers)
     data = r.json()
 
-    assets = data.get("assets", [])
-    ipa = next((a for a in assets if a["name"].endswith(".ipa")), None)
+    assets = data.get("assets", []) if isinstance(data, dict) else []
+    ipa = next((a for a in assets if a.get("name", "").endswith(".ipa")), None)
 
     return {
         "name": app["name"],
@@ -155,11 +161,11 @@ def build_from_github(app):
         "screenshots": [],
         "versions": [
             {
-                "version": (data.get("tag_name") or "").replace("v", ""),
-                "date": (data.get("published_at") or "")[:10],
-                "localizedDescription": (data.get("body") or "")[:1000],
-                "downloadURL": ipa["browser_download_url"] if ipa else "",
-                "size": ipa["size"] if ipa else 0,
+                "version": (data.get("tag_name") or "").replace("v", "") if isinstance(data, dict) else "",
+                "date": (data.get("published_at") or "")[:10] if isinstance(data, dict) else "",
+                "localizedDescription": (data.get("body") or "")[:1000] if isinstance(data, dict) else "",
+                "downloadURL": ipa.get("browser_download_url", "") if ipa else "",
+                "size": ipa.get("size", 0) if ipa else 0,
             }
         ]
     }
@@ -168,12 +174,11 @@ def build_from_github(app):
 # 🌐 AppTesters builder
 # =========================
 def build_from_apptesters(app):
-    name = app.get("name")
+    if not isinstance(app, dict):
+        return None
 
-    style = APP_STYLE.get(name, {
-        "color": None,
-        "subtitle": "Imported from AppTesters"
-    })
+    name = app.get("name")
+    style = APP_STYLE.get(name, {"color": None, "subtitle": "Imported from AppTesters"})
 
     return {
         "name": name,
@@ -197,14 +202,17 @@ def build_from_apptesters(app):
     }
 
 # =========================
-# 🧠 YT repo builder
+# 🧠 YT builder（已修好）
 # =========================
 def build_from_yt(app):
+    if not isinstance(app, dict):
+        return None
+
     name = app.get("name")
     style = YT_STYLE.get(name, {"color": None, "subtitle": "YouTube Mod"})
 
-    versions = app.get("versions", [])
-    v = versions[0] if versions else {}
+    versions = app.get("versions") or []
+    v = versions[0] if isinstance(versions, list) and versions else {}
 
     return {
         "name": name,
@@ -235,26 +243,34 @@ def update_source():
 
     apps_list = []
 
-    # GitHub
+    # GitHub apps
     for app in LOCAL_APPS:
         apps_list.append(build_from_github(app))
 
     # AppTesters
     remote = fetch_remote()
-    remote = [a for a in remote if a.get("name") in TARGET_APPS]
+    remote = [a for a in remote if isinstance(a, dict) and a.get("name") in TARGET_APPS]
     remote = keep_latest_only(remote)
 
     for app in remote:
-        apps_list.append(build_from_apptesters(app))
+        built = build_from_apptesters(app)
+        if built:
+            apps_list.append(built)
 
-    # YT repo
-    yt_data = fetch_yt_repo()
-    yt_apps = [a for a in yt_data.get("apps", []) if a.get("name") in YT_STYLE]
+    # YT repo（修正核心）
+    yt_raw = fetch_yt_repo()
+
+    yt_apps = [
+        a for a in yt_raw
+        if isinstance(a, dict) and a.get("name") in YT_STYLE
+    ]
 
     for app in yt_apps:
-        apps_list.append(build_from_yt(app))
+        built = build_from_yt(app)
+        if built:
+            apps_list.append(built)
 
-    # source
+    # source output
     source_data = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -263,7 +279,7 @@ def update_source():
         "description": f"{DISPLAY_NAME} auto curated source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
         "iconURL": SOURCE_ICON_URL,
-        "featuredApps": [a["bundleIdentifier"] for a in apps_list],
+        "featuredApps": [a["bundleIdentifier"] for a in apps_list if isinstance(a, dict)],
         "apps": apps_list,
         "news": []
     }
