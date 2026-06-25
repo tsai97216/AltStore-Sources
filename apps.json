@@ -7,13 +7,11 @@
   "website": "https://github.com/tsai97216/My-AltStore-Source",
   "iconURL": "https://raw.githubusercontent.com/tsai97216/My-AltStore-Source/main/source_icon.PNG",
   "featuredApps": [
-    "com.bgg.piliplus",
-    "com.mark.ytplusm",
-    "com.spotify.client",
-    "com.google.ios.youtubemusic",
-    "com.burbn.instagram",
     "com.burbn.barcelona",
-    "com.facebook.Facebook"
+    "com.bgg.piliplus",
+    "com.facebook.Facebook",
+    "com.spotify.client",
+    "com.burbn.instagram"
   ],
   "apps": [
     {
@@ -37,26 +35,6 @@
       ]
     },
     {
-      "name": "YTPlusM",
-      "bundleIdentifier": "com.mark.ytplusm",
-      "developerName": "Mark02-2012",
-      "subtitle": "YouTube 修改版",
-      "localizedDescription": "提供去廣告、播放優化與額外功能。",
-      "iconURL": "https://raw.githubusercontent.com/Mark02-2012/YTPlusM/main/Resources/IMG_5913.png",
-      "tintColor": "FF4D4D",
-      "category": "entertainment",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "5.2.1_21.24.3(95)",
-          "date": "2026-06-14",
-          "localizedDescription": "## YTPlusM release info\r\n- **YT version:** `21.24.3`\r\n- **YTLite:** `5.2.1` *(5.2.1 always the cracked version)*\r\n- **iOS 16+**\r\n## Must read:\r\n- Releases named **YTPlus** are releases with only YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent.\r\n- Releases named **YTPlusM** have got YouPiP, YTUHD, YouQuality, RYD, YTABConfig and DontEatMyContent **but also the extra YTPlusM tweaks** \r\n(YTweaks, Gonerino, YouSpeed, YTLowContrastMode, VolumeBoostYT, YouGetCaption). \r\n\r\n**Fun fact**: this is the last pre-built release that I published here😢\r\n",
-          "downloadURL": "",
-          "size": 0
-        }
-      ]
-    },
-    {
       "name": "EeveeSpotify",
       "bundleIdentifier": "com.spotify.client",
       "developerName": "AppTesters",
@@ -73,26 +51,6 @@
           "localizedDescription": "Injected with Premium",
           "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa",
           "size": 118396730
-        }
-      ]
-    },
-    {
-      "name": "YouTubeMusic",
-      "bundleIdentifier": "com.google.ios.youtubemusic",
-      "developerName": "AppTesters",
-      "subtitle": "YouTube Music修改版",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.google.ios.youtubemusic.png",
-      "tintColor": "FF4D4D",
-      "category": "social",
-      "screenshots": [],
-      "versions": [
-        {
-          "version": "9.23.4",
-          "date": "2026-06-10",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/YouTubeMusic_9.23.4_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 97391322
         }
       ]
     },
