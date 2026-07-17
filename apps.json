@@ -26,11 +26,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "2.1.0",
-          "date": "2026-07-12",
-          "localizedDescription": "支持评论区投票\r\n支持显示话题折叠内容\r\n支持显示动态`赞与转发`详情\r\n动态支持点击评论按钮直达评论区\r\n专栏支持跨行复制 #2437 by @My-Responsitories\r\n视频字幕支持未登录使用 #2426 by @My-Responsitories\r\n支持导出 `vtt`、`srt` 格式字幕 co-by @My-Responsitories\r\n解码格式设置改为多选 #2426 by @My-Responsitories #2444 co-by @Starfallan\r\n其他调整 #2426 by @My-Responsitories\r\n\r\n界面优化\r\n调整默认滑动弹簧系数\r\n安卓硬解优先使用 `mediacodec` \r\nLinux 构建优化 #2441 by @VillagerTom\r\n\r\n修复桌面端富文本选中编辑\r\n修复 bug\r\n\r\n其他调整",
-          "downloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.1.0/PiliPlus_ios_2.1.0%2B5109.ipa",
-          "size": 23440601
+          "version": "",
+          "date": "",
+          "localizedDescription": "",
+          "downloadURL": "",
+          "size": 0
         }
       ]
     },
