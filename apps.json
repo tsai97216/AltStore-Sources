@@ -26,11 +26,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "2.1.1",
-          "date": "2026-08-22",
-          "localizedDescription": "支持显示 SC 发送时间\r\n私信消息支持标为已读\r\n过滤无播放权限的推荐视频\r\n取消滑动刷新时不隐藏 FAB\r\n动态文字支持复制表情包内容\r\n刷新滑动距离调整为根据刷新指示器高度计算\r\n恢复历史记录视频播放记录 #2458 by @Zxis233\r\n直播卡片支持反馈 #2456 by @My-Responsitories\r\nLinux 平台关闭 Impeller #2569 by @Axiaobo7788\r\n增加弹幕不透明度/字体大小设置区间 #2452 by @Meteor-3\r\n文字选择工具栏部分支持站内搜索 #2474 by @My-Responsitories\r\n支持播放多片段类型视频，优化仅播音频 #2455 by @My-Responsitories\r\n其他调整 #2612 by @My-Responsitories\r\n\r\n界面优化\r\n优化统一 iOS 列表滑动效果 #2184\r\n优化评论/动态检查结果界面 #2501\r\n图片缓存优化 #2473 by @My-Responsitories\r\n\r\n修复桌面端富文本菜单点击无效\r\n修复 #2182 #2485 #2491 #2",
-          "downloadURL": "https://github.com/bggRGjQaUbCoE/PiliPlus/releases/download/2.1.1/PiliPlus_ios_2.1.1%2B5225.ipa",
-          "size": 23884938
+          "version": "",
+          "date": "",
+          "localizedDescription": "",
+          "downloadURL": "",
+          "size": 0
         }
       ]
     },
