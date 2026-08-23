@@ -1,11 +1,11 @@
 {
   "name": "Chi Sources",
   "identifier": "com.chisources.source",
-  "sourceURL": "https://tsai97216.github.io/My-AltStore-Source/apps.json",
+  "sourceURL": "https://chi.qzz.io/AltStore-Sources/apps.json",
   "subtitle": "iOS IPA Source",
   "description": "Chi Sources auto curated source",
-  "website": "https://github.com/tsai97216/My-AltStore-Source",
-  "iconURL": "https://raw.githubusercontent.com/tsai97216/My-AltStore-Source/main/source_icon.PNG",
+  "website": "https://github.com/tsai97216/AltStore-Sources",
+  "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/source_icon.PNG",
   "featuredApps": [
     "com.bgg.piliplus",
     "com.facebook.Facebook",
