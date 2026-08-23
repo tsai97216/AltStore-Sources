@@ -20,7 +20,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install deps
-        run: pip install requests packaging
+        run: pip install -r requirements.txt
 
       - name: Run script
         run: python update_source.py
