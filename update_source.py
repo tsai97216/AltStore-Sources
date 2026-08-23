@@ -1,4 +1,3 @@
-import os
 import json
 import requests
 from packaging import version as pkg_version
@@ -11,10 +10,8 @@ FILENAME = "apps.json"
 YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Sources"
 
-SOURCE_URL = f"https://{YOUR_GITHUB_ID}.github.io/My-AltStore-Source/{FILENAME}"
-SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/My-AltStore-Source/main/source_icon.PNG"
-
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+SOURCE_URL = f"https://chi.qzz.io/AltStore-Sources/{FILENAME}"
+SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.PNG"
 
 # =========================
 # 📡 SAFE FETCH（核心升級）
@@ -155,10 +152,9 @@ def keep_latest_only(apps):
 # =========================
 def build_from_github(app):
     try:
-        headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
         url = f"https://api.github.com/repos/{app['repo']}/releases/latest"
 
-        r = requests.get(url, headers=headers)
+        r = requests.get(url, timeout=15)
         data = r.json()
 
         assets = data.get("assets", []) if isinstance(data, dict) else []
@@ -300,7 +296,7 @@ def update_source():
         "sourceURL": SOURCE_URL,
         "subtitle": "iOS IPA Source",
         "description": f"{DISPLAY_NAME} auto curated source",
-        "website": f"https://github.com/{YOUR_GITHUB_ID}/My-AltStore-Source",
+        "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources",
         "iconURL": SOURCE_ICON_URL,
         "featuredApps": [a["bundleIdentifier"] for a in apps if isinstance(a, dict)],
         "apps": apps,
