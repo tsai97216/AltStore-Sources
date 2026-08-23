@@ -1,11 +1,16 @@
 import json
+import re
 import requests
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
 from packaging import version as pkg_version
 
 # =========================
 # 🌙 基本設定
 # =========================
 FILENAME = "apps.json"
+README_FILENAME = "README.md"
 
 YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Sources"
@@ -215,7 +220,7 @@ def build_from_apptesters(app):
 
 
 # =========================
-# 🎬 YT (已完全穩定版)
+# 🎬 YT
 # =========================
 def match_yt(name):
     name = (name or "").lower()
@@ -256,12 +261,81 @@ def build_from_yt(app):
 
 
 # =========================
+# 📝 README STATUS
+# =========================
+STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
+STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
+
+
+def now_taiwan():
+    return datetime.now(ZoneInfo("Asia/Taipei")).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def get_previous_content_update(readme):
+    match = re.search(r"Last content update:\s*([^\n]+)", readme)
+    return match.group(1).strip() if match else "尚未更新"
+
+
+def update_readme(apps, checked_at, content_updated_at):
+    path = Path(README_FILENAME)
+    readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
+
+    rows = [
+        "| App | Latest version | Version date |",
+        "| --- | --- | --- |",
+    ]
+
+    for app in apps:
+        if not isinstance(app, dict):
+            continue
+        versions = app.get("versions") or []
+        latest = versions[0] if versions else {}
+        rows.append(
+            f"| {app.get('name', 'Unknown')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |"
+        )
+
+    status = "\n".join([
+        STATUS_START,
+        "## Update Status",
+        "",
+        f"- **Last automatic check:** {checked_at} (Asia/Taipei)",
+        f"- **Last content update:** {content_updated_at} (Asia/Taipei)",
+        "",
+        "### App Versions",
+        "",
+        *rows,
+        "",
+        STATUS_END,
+    ])
+
+    pattern = re.compile(
+        re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END),
+        re.DOTALL,
+    )
+
+    if pattern.search(readme):
+        readme = pattern.sub(status, readme)
+    else:
+        readme = readme.rstrip() + "\n\n" + status + "\n"
+
+    path.write_text(readme, encoding="utf-8")
+
+
+# =========================
 # 🚀 MAIN
 # =========================
 def update_source():
     print(f"🚀 Updating {DISPLAY_NAME}...")
 
     apps = []
+
+    # Read previous apps.json before rebuilding it.
+    old_apps = None
+    try:
+        with open(FILENAME, "r", encoding="utf-8") as f:
+            old_apps = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        pass
 
     # GitHub
     for a in LOCAL_APPS:
@@ -281,7 +355,6 @@ def update_source():
 
     # YT
     yt_raw = fetch_yt_repo()
-
     yt_apps = [a for a in yt_raw if isinstance(a, dict) and match_yt(a.get("name"))]
 
     for a in yt_apps:
@@ -303,10 +376,24 @@ def update_source():
         "news": []
     }
 
+    new_content = json.dumps(source, indent=2, ensure_ascii=False) + "\n"
+    old_content = json.dumps(old_apps, indent=2, ensure_ascii=False) + "\n" if old_apps is not None else None
+    content_changed = old_content != new_content
+
     with open(FILENAME, "w", encoding="utf-8") as f:
-        json.dump(source, f, indent=2, ensure_ascii=False)
+        f.write(new_content)
+
+    checked_at = now_taiwan()
+    readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
+    previous_content_update = get_previous_content_update(readme)
+    content_updated_at = checked_at if content_changed else previous_content_update
+
+    update_readme(apps, checked_at, content_updated_at)
 
     print("🎉 DONE:", len(apps), "apps")
+    print("🔎 Automatic check:", checked_at)
+    print("📝 Content changed:", content_changed)
+    print("📦 Last content update:", content_updated_at)
 
 
 if __name__ == "__main__":
