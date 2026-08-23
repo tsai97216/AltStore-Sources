@@ -26,3 +26,21 @@ More apps may be added in the future.
 * SideStore
 
 All rights belong to their respective developers.
+
+<!-- AUTO-UPDATE-STATUS:START -->
+## Update Status
+
+- **Last automatic check:** 2026-08-23 23:59:11 (Asia/Taipei)
+- **Last content update:** 尚未更新 (Asia/Taipei)
+
+### App Versions
+
+| App | Latest version | Version date |
+| --- | --- | --- |
+| PiliPlus | 2.1.1.2 | 2026-08-22 |
+| Facebook | 570.0.0 | 2026-07-22 |
+| Threads | 437.0.0 | 2026-07-07 |
+| EeveeSpotify | 9.1.56 | 2026-06-16 |
+| Instagram | 433.0.0 | 2026-06-10 |
+
+<!-- AUTO-UPDATE-STATUS:END -->
