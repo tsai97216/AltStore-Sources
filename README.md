@@ -22,13 +22,11 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 More apps may be added in the future.
 
-## Update Status
-
 <!-- AUTO-UPDATE-STATUS:START -->
 ## Update Status
 
 - **Last automatic check:** 2026-08-24 00:08:03 (Asia/Taipei)
-- **Last content update:** ** ** 尚未更新 (Asia/Taipei) (Asia/Taipei) (Asia/Taipei)
+- **Last content update:** 尚未更新 (Asia/Taipei)
 
 ### App Versions
 
@@ -39,7 +37,6 @@ More apps may be added in the future.
 | Threads | 437.0.0 | 2026-07-07 |
 | EeveeSpotify | 9.1.56 | 2026-06-16 |
 | Instagram | 433.0.0 | 2026-06-10 |
-
 <!-- AUTO-UPDATE-STATUS:END -->
 
 ## Credits
