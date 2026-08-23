@@ -62,7 +62,7 @@ LOCAL_APPS = [
         "repo": "bggRGjQaUbCoE/PiliPlus",
         "name": "PiliPlus",
         "bundleID": "com.bgg.piliplus",
-        "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
+        "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/main/piliplus.png",
         "subtitle": "第三方 Bilibili 客戶端",
         "desc": "...",
         "color": "7DCEA0",
