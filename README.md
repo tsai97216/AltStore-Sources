@@ -23,14 +23,14 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 More apps may be added in the future.
 
 <!-- AUTO-UPDATE-STATUS:START -->
-## Update Status
+## 更新狀態
 
-- **Last automatic check:** 2026-08-24 14:53:30 (Asia/Taipei)
-- **Last content update:** ** ** 2026-08-24 12:41:04 (Asia/Taipei) (Asia/Taipei) (Asia/Taipei)
+- **最近自動檢查：** 2026-08-24 14:53:30
+- **最近內容更新：** 2026-08-24 12:41:04
 
-### App Versions
+### App 版本
 
-| App | Latest version | Version date |
+| App | 最新版本 | 版本日期 |
 | --- | --- | --- |
 | PiliPlus | 2.1.2 | 2026-08-24 |
 | Facebook | 570.0.0 | 2026-07-22 |
