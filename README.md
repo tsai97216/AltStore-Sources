@@ -25,8 +25,8 @@ More apps may be added in the future.
 <!-- AUTO-UPDATE-STATUS:START -->
 ## Update Status
 
-- **Last automatic check:** 2026-08-24 09:09:04 (Asia/Taipei)
-- **Last content update:** ** ** ** ** ** ** ** ** 2026-08-24 01:01:41 (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei)
+- **Last automatic check:** 2026-08-24 11:00:37 (Asia/Taipei)
+- **Last content update:** ** ** ** ** ** ** ** ** ** 2026-08-24 01:01:41 (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei)
 
 ### App Versions
 
