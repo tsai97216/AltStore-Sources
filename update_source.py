@@ -272,8 +272,15 @@ def now_taiwan():
 
 
 def get_previous_content_update(readme):
-    match = re.search(r"Last content update:\s*([^\n]+)", readme)
-    return match.group(1).strip() if match else "尚未更新"
+    patterns = [
+        r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
+        r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, readme)
+        if match:
+            return match.group(1)
+    return "尚未更新"
 
 
 def update_readme(apps, checked_at, content_updated_at):
@@ -281,7 +288,7 @@ def update_readme(apps, checked_at, content_updated_at):
     readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
 
     rows = [
-        "| App | Latest version | Version date |",
+        "| App | 最新版本 | 版本日期 |",
         "| --- | --- | --- |",
     ]
 
@@ -296,12 +303,12 @@ def update_readme(apps, checked_at, content_updated_at):
 
     status = "\n".join([
         STATUS_START,
-        "## Update Status",
+        "## 更新狀態",
         "",
-        f"- **Last automatic check:** {checked_at} (Asia/Taipei)",
-        f"- **Last content update:** {content_updated_at} (Asia/Taipei)",
+        f"- **最近自動檢查：** {checked_at}",
+        f"- **最近內容更新：** {content_updated_at}",
         "",
-        "### App Versions",
+        "### App 版本",
         "",
         *rows,
         "",
