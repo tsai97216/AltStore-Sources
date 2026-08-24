@@ -25,14 +25,14 @@ More apps may be added in the future.
 <!-- AUTO-UPDATE-STATUS:START -->
 ## Update Status
 
-- **Last automatic check:** 2026-08-24 11:00:37 (Asia/Taipei)
-- **Last content update:** ** ** ** ** ** ** ** ** ** 2026-08-24 01:01:41 (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei) (Asia/Taipei)
+- **Last automatic check:** 2026-08-24 12:41:04 (Asia/Taipei)
+- **Last content update:** 2026-08-24 12:41:04 (Asia/Taipei)
 
 ### App Versions
 
 | App | Latest version | Version date |
 | --- | --- | --- |
-| PiliPlus | 2.1.1.2 | 2026-08-22 |
+| PiliPlus | 2.1.2 | 2026-08-24 |
 | Facebook | 570.0.0 | 2026-07-22 |
 | Threads | 437.0.0 | 2026-07-07 |
 | EeveeSpotify | 9.1.56 | 2026-06-16 |
