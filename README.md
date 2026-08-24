@@ -1,26 +1,26 @@
 # Chi Sources
 
-A curated AltStore / SideStore source with automatically updated IPA apps.
+一個自動更新 IPA App 的 AltStore / SideStore Source。
 
 ## Source
 
-**Source URL**
+**Source 網址**
 
 ```text
 https://chi.qzz.io/AltStore-Sources/apps.json
 ```
 
-## Apps
+## App
 
-| App | Description |
+| App | 說明 |
 | --- | --- |
-| **PiliPlus** | Third-party Bilibili client with enhanced playback and additional features. |
-| **Facebook** | Facebook with tweaks. |
-| **Threads** | Threads with tweaks. |
-| **Instagram** | Instagram with tweaks. |
-| **EeveeSpotify** | Spotify with tweaks. |
+| **PiliPlus** | 第三方 Bilibili 客戶端，提供增強播放與其他功能。 |
+| **Facebook** | Facebook 修改版。 |
+| **Threads** | Threads 修改版。 |
+| **Instagram** | Instagram 修改版。 |
+| **EeveeSpotify** | Spotify 修改版。 |
 
-More apps may be added in the future.
+未來可能會加入更多 App。
 
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
@@ -40,11 +40,11 @@ More apps may be added in the future.
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
-## Credits
+## 致謝
 
 - AppTesters
 - PiliPlus
 - AltStore
 - SideStore
 
-All rights belong to their respective developers.
+所有權利均屬於各自的開發者。
