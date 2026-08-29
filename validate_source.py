@@ -3,16 +3,10 @@ import sys
 from pathlib import Path
 from urllib.parse import urlparse
 
+from update_source import GITHUB_APPS, TARGET_APPS
+
 FILENAME = "apps.json"
-EXPECTED_APPS = {
-    "PiliPlus",
-    "YTKACE",
-    "YTMUltimate+",
-    "Facebook",
-    "Threads",
-    "Instagram",
-    "EeveeSpotify",
-}
+EXPECTED_APPS = {app["name"] for app in GITHUB_APPS} | set(TARGET_APPS)
 REQUIRED_APP_FIELDS = {
     "name",
     "bundleIdentifier",
@@ -40,6 +34,8 @@ def fail(message):
 
 
 def valid_https_url(value):
+    if not isinstance(value, str):
+        return False
     try:
         parsed = urlparse(value)
         return parsed.scheme == "https" and bool(parsed.netloc)
@@ -63,6 +59,10 @@ def validate_source():
     for field in ("name", "identifier", "sourceURL", "subtitle", "description", "website", "iconURL", "featuredApps", "apps", "news"):
         if field not in source:
             return fail(f"Missing root field: {field}")
+
+    for field in ("sourceURL", "website", "iconURL"):
+        if not valid_https_url(source[field]):
+            return fail(f"Invalid root URL: {field}")
 
     if not isinstance(source["apps"], list):
         return fail("apps must be an array")
