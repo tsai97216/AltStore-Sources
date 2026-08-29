@@ -149,7 +149,7 @@ def keep_latest_only(apps):
 def choose_ipa_asset(assets, app):
     candidates = [a for a in assets if isinstance(a, dict) and str(a.get("name", "")).lower().endswith(".ipa")]
     if app.get("name") == "YTMUltimate+":
-        preferred = [a for a in candidates if "no-ymp" not in str(a.get("name", "")).lower()]
+        preferred = [a for a in candidates if "no_ymp" not in str(a.get("name", "")).lower() and "no-ymp" not in str(a.get("name", "")).lower()]
         if preferred:
             candidates = preferred
     if not candidates:
@@ -161,16 +161,53 @@ def choose_ipa_asset(assets, app):
     return max(candidates, key=score)
 
 
+def get_latest_youtube_music_release(app):
+    """Find the newest normal YTMUltimate+ release, excluding no-YMP and other variants."""
+    try:
+        response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases?per_page=30", timeout=15)
+        response.raise_for_status()
+        releases = response.json()
+        if not isinstance(releases, list):
+            return None
+        candidates = []
+        for release in releases:
+            if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"):
+                continue
+            name = str(release.get("name") or "")
+            tag = str(release.get("tag_name") or "")
+            combined = f"{name} {tag}".lower()
+            if "no-ymp" in combined or "no_ymp" in combined:
+                continue
+            if "ytmultimate+" not in name.lower():
+                continue
+            if not re.search(r"\band\s+\d+\.\d+\.\d+\b", name, re.IGNORECASE):
+                continue
+            candidates.append(release)
+        if not candidates:
+            return None
+        candidates.sort(key=lambda r: r.get("published_at") or r.get("created_at") or "", reverse=True)
+        return candidates[0]
+    except (requests.RequestException, ValueError) as exc:
+        print(f"⚠️ Release lookup failed for {app['name']}: {exc}")
+        return None
+
+
 def build_from_github(app):
     try:
-        response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases/latest", timeout=15)
-        response.raise_for_status()
-        data = response.json()
+        if app.get("name") == "YTMUltimate+":
+            data = get_latest_youtube_music_release(app)
+            if not data:
+                print(f"⚠️ No matching normal YTMUltimate+ release found for {app['name']}")
+                return None
+        else:
+            response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases/latest", timeout=15)
+            response.raise_for_status()
+            data = response.json()
         ipa = choose_ipa_asset(data.get("assets", []), app)
         if not ipa:
             print(f"⚠️ No IPA asset found for {app['name']}")
             return None
-        version_name = normalize_version(app["name"], (data.get("tag_name") or "").lstrip("v"))
+        version_name = normalize_version(app["name"], (data.get("name") or data.get("tag_name") or "").lstrip("v"))
         download_url = ipa.get("browser_download_url")
         size = ipa.get("size", 0)
         if not version_name or not download_url or not validate_download_url(download_url, size):
