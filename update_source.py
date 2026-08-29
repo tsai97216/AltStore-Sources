@@ -72,7 +72,7 @@ LOCAL_APPS = [
         "repo": "itzzace/ytkace",
         "name": "YTKACE",
         "bundleID": "com.google.ios.youtube",
-        "icon": "https://github.com/itzzace.png",
+        "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
         "subtitle": "YouTube 修改版",
         "desc": "An open-source YouTube enhancement for iOS.",
         "color": "FF0000",
