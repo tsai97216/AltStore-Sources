@@ -122,7 +122,8 @@ def get_version(app):
 
 def normalize_version(name, version_name):
     if name == "YTMUltimate+":
-        match = re.search(r"(?<!\d)(\d+\.\d+\.\d+)(?!\d)", str(version_name))
+        text = str(version_name)
+        match = re.search(r"\band\s+(\d+\.\d+\.\d+)(?!\d)", text, re.IGNORECASE)
         if match:
             return match.group(1)
     return version_name
@@ -147,6 +148,10 @@ def keep_latest_only(apps):
 
 def choose_ipa_asset(assets, app):
     candidates = [a for a in assets if isinstance(a, dict) and str(a.get("name", "")).lower().endswith(".ipa")]
+    if app.get("name") == "YTMUltimate+":
+        preferred = [a for a in candidates if "no-ymp" not in str(a.get("name", "")).lower()]
+        if preferred:
+            candidates = preferred
     if not candidates:
         return None
     keywords = [str(k).lower() for k in app.get("asset_keywords", [])]
