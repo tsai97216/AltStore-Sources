@@ -60,7 +60,7 @@ LOCAL_APPS = [
         "repo": "Mark02-2012/YTMUltimatePLUS",
         "name": "YTMUltimate+",
         "bundleID": "com.google.ios.youtubemusic",
-        "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
+        "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png",
         "subtitle": "YouTube Music 修改版",
         "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
         "color": "FF0000",
