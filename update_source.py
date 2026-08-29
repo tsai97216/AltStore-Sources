@@ -6,46 +6,28 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from packaging import version as pkg_version
 
-# =========================
-# 🌙 基本設定
-# =========================
 FILENAME = "apps.json"
 README_FILENAME = "README.md"
-
 YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Sources"
-
 SOURCE_URL = f"https://chi.qzz.io/AltStore-Sources/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.PNG"
 
-# =========================
-# 📡 SAFE FETCH（核心升級）
-# =========================
+
 def fetch_json(url):
     try:
-        headers = {
-            "User-Agent": "Mozilla/5.0",
-            "Accept": "application/json"
-        }
-
+        headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
         r = requests.get(url, headers=headers, timeout=15)
-
         print(f"📡 {url} -> {r.status_code}")
-
         if r.status_code != 200:
             print("⚠️ fetch failed:", url)
             return None
-
         return r.json()
-
     except Exception as e:
         print("⚠️ fetch error:", url, e)
         return None
 
 
-# =========================
-# 🧱 SAFE NORMALIZER
-# =========================
 def ensure_list(data, key=None):
     if isinstance(data, list):
         return data
@@ -55,9 +37,6 @@ def ensure_list(data, key=None):
     return []
 
 
-# =========================
-# 📦 SOURCES
-# =========================
 LOCAL_APPS = [
     {
         "repo": "bggRGjQaUbCoE/PiliPlus",
@@ -76,13 +55,20 @@ LOCAL_APPS = [
         "subtitle": "YouTube 修改版",
         "desc": "An open-source YouTube enhancement for iOS.",
         "color": "FF0000",
-    }
+    },
+    {
+        "repo": "Mark02-2012/YTMUltimatePLUS",
+        "name": "YTMUltimate+",
+        "bundleID": "com.google.ios.youtubemusic",
+        "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
+        "subtitle": "YouTube Music 修改版",
+        "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
+        "color": "FF0000",
+    },
 ]
 
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
-
 TARGET_APPS = {"Facebook", "Threads", "Instagram", "EeveeSpotify"}
-
 APP_STYLE = {
     "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版"},
     "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版"},
@@ -91,153 +77,87 @@ APP_STYLE = {
 }
 
 YT_REPO = "https://repo.ballermc.com/repo.json"
-
 YT_STYLE = {
     "YTPlusM": {"color": "FF4D4D", "subtitle": "YouTube 修改版"},
     "YouTube Music Ultimate+": {"color": "FF4D4D", "subtitle": "YouTube Music 修改版"},
 }
-
-YT_NAME_ALIASES = {
-    "ytplusm",
-    "yt plus m",
-    "youtube music ultimate+",
-    "youtube music ultimate",
-}
+YT_NAME_ALIASES = {"ytplusm", "yt plus m", "youtube music ultimate+", "youtube music ultimate"}
 
 
-# =========================
-# 📡 FETCH WRAPPERS
-# =========================
 def fetch_remote():
-    data = fetch_json(SOURCE_DATA_URL)
-    return ensure_list(data, "apps")
+    return ensure_list(fetch_json(SOURCE_DATA_URL), "apps")
 
 
 def _collect_dicts(data):
-    """
-    遞迴尋找來源 JSON 中的 App 物件。
-    兼容 apps / applications / repositories 等不同包裝結構。
-    """
     results = []
-
     if isinstance(data, list):
         for item in data:
             results.extend(_collect_dicts(item))
         return results
-
     if not isinstance(data, dict):
         return results
-
-    if any(key in data for key in (
-        "bundleIdentifier",
-        "bundleID",
-        "downloadURL",
-        "versions",
-        "version"
-    )):
+    if any(key in data for key in ("bundleIdentifier", "bundleID", "downloadURL", "versions", "version")):
         results.append(data)
-
     for value in data.values():
         if isinstance(value, (dict, list)):
             results.extend(_collect_dicts(value))
-
     return results
 
 
 def fetch_yt_repo():
     data = fetch_json(YT_REPO)
-
     if data is None:
         print("❌ YT source unavailable")
         return None
-
-    apps = _collect_dicts(data)
-
-    unique = []
-    seen = set()
-
-    for app in apps:
-        marker = (
-            app.get("bundleIdentifier")
-            or app.get("bundleID")
-            or app.get("name")
-            or id(app)
-        )
-
+    apps, seen = [], set()
+    for app in _collect_dicts(data):
+        marker = app.get("bundleIdentifier") or app.get("bundleID") or app.get("name") or id(app)
         if marker in seen:
             continue
-
         seen.add(marker)
-        unique.append(app)
+        apps.append(app)
+    print(f"📦 YT source candidates: {len(apps)}")
+    return apps
 
-    print(f"📦 YT source candidates: {len(unique)}")
-    return unique
 
-
-# =========================
-# 🔥 VERSION
-# =========================
 def get_version(app):
     if not isinstance(app, dict):
         return "0.0.0"
-
-    v = app.get("version")
-    if v:
-        return str(v)
-
+    if app.get("version"):
+        return str(app["version"])
     versions = app.get("versions") or []
-    if isinstance(versions, list) and versions:
-        first = versions[0]
-        if isinstance(first, dict):
-            return str(first.get("version", "0.0.0"))
-
+    if isinstance(versions, list) and versions and isinstance(versions[0], dict):
+        return str(versions[0].get("version", "0.0.0"))
     return "0.0.0"
 
 
 def keep_latest_only(apps):
     latest = {}
-
     for app in apps:
-        if not isinstance(app, dict):
+        if not isinstance(app, dict) or not app.get("bundleIdentifier"):
             continue
-
-        bid = app.get("bundleIdentifier")
-        if not bid:
-            continue
-
-        ver = get_version(app)
-
+        bid, ver = app["bundleIdentifier"], get_version(app)
         if bid not in latest:
             latest[bid] = app
             continue
-
         try:
             if pkg_version.parse(ver) > pkg_version.parse(get_version(latest[bid])):
                 latest[bid] = app
         except Exception:
             latest[bid] = app
-
     return list(latest.values())
 
 
-# =========================
-# 🐙 GITHUB
-# =========================
 def build_from_github(app):
     try:
         url = f"https://api.github.com/repos/{app['repo']}/releases/latest"
-
         r = requests.get(url, timeout=15)
         r.raise_for_status()
         data = r.json()
-
-        assets = data.get("assets", []) if isinstance(data, dict) else []
-        ipa = next((a for a in assets if a.get("name", "").lower().endswith(".ipa")), None)
-
+        ipa = next((a for a in data.get("assets", []) if a.get("name", "").lower().endswith(".ipa")), None)
         if not ipa:
             print(f"⚠️ No IPA asset found for {app['name']}")
             return None
-
         return {
             "name": app["name"],
             "bundleIdentifier": app["bundleID"],
@@ -254,24 +174,18 @@ def build_from_github(app):
                 "localizedDescription": (data.get("body") or "")[:500],
                 "downloadURL": ipa.get("browser_download_url", ""),
                 "size": ipa.get("size", 0),
-            }]
+            }],
         }
-
     except Exception as e:
         print("⚠️ GitHub build failed:", e)
         return None
 
 
-# =========================
-# 📱 APPT TESTERS
-# =========================
 def build_from_apptesters(app):
     if not isinstance(app, dict):
         return None
-
     name = app.get("name")
     style = APP_STYLE.get(name, {"color": None, "subtitle": "Imported"})
-
     return {
         "name": name,
         "bundleIdentifier": app.get("bundleIdentifier"),
@@ -288,82 +202,45 @@ def build_from_apptesters(app):
             "localizedDescription": app.get("localizedDescription", ""),
             "downloadURL": app.get("downloadURL"),
             "size": app.get("size", 0),
-        }]
+        }],
     }
 
 
-# =========================
-# 🎬 YT
-# =========================
 def _yt_identity(app):
     if not isinstance(app, dict):
         return ""
-
-    parts = [
-        app.get("name", ""),
-        app.get("bundleIdentifier", ""),
-        app.get("bundleID", ""),
-        app.get("developerName", ""),
-        app.get("developer", ""),
-    ]
-
-    return " ".join(str(x) for x in parts if x).lower()
+    return " ".join(str(app.get(k, "")) for k in ("name", "bundleIdentifier", "bundleID", "developerName", "developer") if app.get(k)).lower()
 
 
 def match_yt(app):
     identity = _yt_identity(app)
-
     matched = any(alias in identity for alias in YT_NAME_ALIASES)
-
     if matched:
-        print(
-            "✅ YT matched:",
-            app.get("name", "Unknown"),
-            app.get("bundleIdentifier") or app.get("bundleID", "")
-        )
-
+        print("✅ YT matched:", app.get("name", "Unknown"), app.get("bundleIdentifier") or app.get("bundleID", ""))
     return matched
 
 
 def _get_yt_version_entry(app):
     versions = app.get("versions")
-
     if isinstance(versions, list) and versions:
         return versions[0] if isinstance(versions[0], dict) else {}
-
     if any(key in app for key in ("downloadURL", "version", "date", "size")):
         return app
-
     return {}
 
 
 def build_from_yt(app):
     if not isinstance(app, dict):
         return None
-
-    name = app.get("name", "")
     identity = _yt_identity(app)
-
-    if "ytplusm" in identity or "yt plus m" in identity:
-        style = YT_STYLE["YTPlusM"]
-    else:
-        style = YT_STYLE["YouTube Music Ultimate+"]
-
+    style = YT_STYLE["YTPlusM"] if "ytplusm" in identity or "yt plus m" in identity else YT_STYLE["YouTube Music Ultimate+"]
     v = _get_yt_version_entry(app)
-
-    download_url = (
-        v.get("downloadURL")
-        or v.get("downloadUrl")
-        or v.get("download")
-        or ""
-    )
-
+    download_url = v.get("downloadURL") or v.get("downloadUrl") or v.get("download") or ""
     if not download_url:
-        print(f"⚠️ YT matched but no download URL: {name}")
+        print(f"⚠️ YT matched but no download URL: {app.get('name', '')}")
         return None
-
     return {
-        "name": name,
+        "name": app.get("name", ""),
         "bundleIdentifier": app.get("bundleIdentifier") or app.get("bundleID"),
         "developerName": app.get("developerName") or app.get("developer") or "Ballermc",
         "subtitle": style["subtitle"],
@@ -378,13 +255,10 @@ def build_from_yt(app):
             "localizedDescription": v.get("localizedDescription", ""),
             "downloadURL": download_url,
             "size": v.get("size", 0),
-        }]
+        }],
     }
 
 
-# =========================
-# 📝 README STATUS
-# =========================
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
@@ -394,11 +268,7 @@ def now_taiwan():
 
 
 def get_previous_content_update(readme):
-    patterns = [
-        r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
-        r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
-    ]
-    for pattern in patterns:
+    for pattern in [r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"]:
         match = re.search(pattern, readme)
         if match:
             return match.group(1)
@@ -408,25 +278,13 @@ def get_previous_content_update(readme):
 def update_readme(apps, checked_at, content_updated_at):
     path = Path(README_FILENAME)
     readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
-
-    rows = [
-        "| App | 最新版本 | 版本日期 |",
-        "| --- | --- | --- |",
-    ]
-
+    rows = ["| App | 最新版本 | 版本日期 |", "| --- | --- | --- |"]
     for app in apps:
         if not isinstance(app, dict):
             continue
-
         versions = app.get("versions") or []
         latest = versions[0] if versions else {}
-
-        rows.append(
-            f"| {app.get('name', 'Unknown')} | "
-            f"{latest.get('version', 'N/A')} | "
-            f"{latest.get('date', 'N/A')} |"
-        )
-
+        rows.append(f"| {app.get('name', 'Unknown')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
     status = "\n".join([
         STATUS_START,
         "## 更新狀態",
@@ -440,71 +298,42 @@ def update_readme(apps, checked_at, content_updated_at):
         "",
         STATUS_END,
     ])
-
-    pattern = re.compile(
-        re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END),
-        re.DOTALL,
-    )
-
-    if pattern.search(readme):
-        readme = pattern.sub(status, readme)
-    else:
-        readme = readme.rstrip() + "\n\n" + status + "\n"
-
+    pattern = re.compile(re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END), re.DOTALL)
+    readme = pattern.sub(status, readme) if pattern.search(readme) else readme.rstrip() + "\n\n" + status + "\n"
     path.write_text(readme, encoding="utf-8")
 
 
-# =========================
-# 🚀 MAIN
-# =========================
 def update_source():
     print(f"🚀 Updating {DISPLAY_NAME}...")
-
     apps = []
-
-    # Read previous apps.json before rebuilding it.
     old_apps = None
     try:
-        with open(FILENAME, "r", encoding="utf-8") as f:
-            old_apps = json.load(f)
+        old_apps = json.loads(Path(FILENAME).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    # GitHub
-    for a in LOCAL_APPS:
-        r = build_from_github(a)
-        if r:
-            apps.append(r)
+    for app in LOCAL_APPS:
+        result = build_from_github(app)
+        if result:
+            apps.append(result)
 
-    # AppTesters
-    remote = fetch_remote()
-    remote = [
-        a for a in remote
-        if isinstance(a, dict) and a.get("name") in TARGET_APPS
-    ]
-    remote = keep_latest_only(remote)
+    remote = keep_latest_only([a for a in fetch_remote() if isinstance(a, dict) and a.get("name") in TARGET_APPS])
+    for app in remote:
+        result = build_from_apptesters(app)
+        if result:
+            apps.append(result)
 
-    for a in remote:
-        r = build_from_apptesters(a)
-        if r:
-            apps.append(r)
-
-    # YT
     yt_raw = fetch_yt_repo()
-
     if yt_raw is None:
         print("⚠️ YT update skipped: source unavailable")
     else:
         yt_apps = [a for a in yt_raw if match_yt(a)]
-
         print(f"🎬 YT matched apps: {len(yt_apps)}")
+        for app in yt_apps:
+            result = build_from_yt(app)
+            if result:
+                apps.append(result)
 
-        for a in yt_apps:
-            r = build_from_yt(a)
-            if r:
-                apps.append(r)
-
-    # OUTPUT
     source = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -515,30 +344,18 @@ def update_source():
         "iconURL": SOURCE_ICON_URL,
         "featuredApps": [a["bundleIdentifier"] for a in apps if isinstance(a, dict)],
         "apps": apps,
-        "news": []
+        "news": [],
     }
 
     new_content = json.dumps(source, indent=2, ensure_ascii=False) + "\n"
-    old_content = (
-        json.dumps(old_apps, indent=2, ensure_ascii=False) + "\n"
-        if old_apps is not None else None
-    )
-
+    old_content = json.dumps(old_apps, indent=2, ensure_ascii=False) + "\n" if old_apps is not None else None
     content_changed = old_content != new_content
-
-    with open(FILENAME, "w", encoding="utf-8") as f:
-        f.write(new_content)
+    Path(FILENAME).write_text(new_content, encoding="utf-8")
 
     checked_at = now_taiwan()
-    readme = (
-        Path(README_FILENAME).read_text(encoding="utf-8")
-        if Path(README_FILENAME).exists()
-        else ""
-    )
-
+    readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
     previous_content_update = get_previous_content_update(readme)
     content_updated_at = checked_at if content_changed else previous_content_update
-
     update_readme(apps, checked_at, content_updated_at)
 
     print("🎉 DONE:", len(apps), "apps")
