@@ -45,7 +45,6 @@ def fetch_json(url):
 
 
 def validate_download_url(url, expected_size=0):
-    """Validate an IPA URL without downloading the complete file."""
     if not isinstance(url, str) or not url.startswith("https://"):
         print(f"⚠️ Invalid download URL: {url}")
         return False
@@ -93,32 +92,14 @@ def ensure_list(data, key=None):
 
 
 GITHUB_APPS = [
-    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus",
-     "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus",
-     "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
-     "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
-     "color": "7DCEA0", "category": "entertainment", "asset_keywords": ["piliplus"]},
-    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube",
-     "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace",
-     "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
-     "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.",
-     "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytkace"]},
-    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic",
-     "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS",
-     "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png",
-     "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
-     "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
+    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "7DCEA0", "category": "entertainment", "asset_keywords": ["piliplus"]},
+    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytkace"]},
+    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
-
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
 TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
-APP_STYLE = {
-    "Facebook": {"color": "1877F2", "subtitle": "AppTesters"},
-    "Threads": {"color": "2D2D2D", "subtitle": "AppTesters"},
-    "Instagram": {"color": "E4405F", "subtitle": "AppTesters"},
-    "EeveeSpotify": {"color": "1DB954", "subtitle": "AppTesters"},
-}
+APP_STYLE = {"Facebook": {"color": "1877F2", "subtitle": "AppTesters"}, "Threads": {"color": "2D2D2D", "subtitle": "AppTesters"}, "Instagram": {"color": "E4405F", "subtitle": "AppTesters"}, "EeveeSpotify": {"color": "1DB954", "subtitle": "AppTesters"}}
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
@@ -137,6 +118,14 @@ def get_version(app):
     if versions and isinstance(versions[0], dict):
         return str(versions[0].get("version", "0.0.0"))
     return "0.0.0"
+
+
+def normalize_version(name, version_name):
+    if name == "YTMUltimate+":
+        match = re.search(r"(?<!\d)(\d+\.\d+\.\d+)(?!\d)", str(version_name))
+        if match:
+            return match.group(1)
+    return version_name
 
 
 def keep_latest_only(apps):
@@ -176,19 +165,12 @@ def build_from_github(app):
         if not ipa:
             print(f"⚠️ No IPA asset found for {app['name']}")
             return None
-        version_name = (data.get("tag_name") or "").lstrip("v")
+        version_name = normalize_version(app["name"], (data.get("tag_name") or "").lstrip("v"))
         download_url = ipa.get("browser_download_url")
         size = ipa.get("size", 0)
         if not version_name or not download_url or not validate_download_url(download_url, size):
             return None
-        return {
-            "name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"],
-            "subtitle": app["subtitle"], "localizedDescription": app["desc"], "iconURL": app["icon"],
-            "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [],
-            "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10],
-                          "localizedDescription": (data.get("body") or "")[:500],
-                          "downloadURL": download_url, "size": size}],
-        }
+        return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": app["subtitle"], "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10], "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
     except (requests.RequestException, ValueError) as exc:
         print(f"⚠️ GitHub build failed for {app['name']}: {exc}")
         return None
@@ -203,14 +185,7 @@ def build_from_apptesters(app):
     size = app.get("size", 0)
     if not app.get("bundleIdentifier") or not url or not validate_download_url(url, size):
         return None
-    return {
-        "name": name, "bundleIdentifier": app["bundleIdentifier"], "developerName": "AppTesters",
-        "subtitle": style["subtitle"], "localizedDescription": app.get("localizedDescription", ""),
-        "iconURL": app.get("iconURL") or app.get("icon"), "tintColor": style["color"],
-        "category": "social" if name in {"Facebook", "Threads", "Instagram"} else "entertainment",
-        "screenshots": [], "versions": [{"version": app.get("version", ""), "date": app.get("versionDate", ""),
-        "localizedDescription": app.get("localizedDescription", ""), "downloadURL": url, "size": size}],
-    }
+    return {"name": name, "bundleIdentifier": app["bundleIdentifier"], "developerName": "AppTesters", "subtitle": style["subtitle"], "localizedDescription": app.get("localizedDescription", ""), "iconURL": app.get("iconURL") or app.get("icon"), "tintColor": style["color"], "category": "social" if name in {"Facebook", "Threads", "Instagram"} else "entertainment", "screenshots": [], "versions": [{"version": app.get("version", ""), "date": app.get("versionDate", ""), "localizedDescription": app.get("localizedDescription", ""), "downloadURL": url, "size": size}]}
 
 
 def find_previous_app(old_apps, bundle_id=None, name=None):
@@ -231,8 +206,7 @@ def now_taiwan():
 
 
 def get_previous_content_update(readme):
-    for pattern in [r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
-                    r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"]:
+    for pattern in [r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"]:
         match = re.search(pattern, readme)
         if match:
             return match.group(1)
@@ -263,8 +237,7 @@ def update_readme(apps, checked_at, content_updated_at, statuses):
         versions = app.get("versions") or []
         latest = versions[0] if versions and isinstance(versions[0], dict) else {}
         status_rows.append(f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
-    status = "\n".join([STATUS_START, "## 更新狀態", "", f"- **最近自動檢查：** {checked_at}（台灣時間）",
-                         f"- **最近內容更新：** {content_updated_at}（台灣時間）", "", "### App 版本", "", *status_rows, "", STATUS_END])
+    status = "\n".join([STATUS_START, "## 更新狀態", "", f"- **最近自動檢查：** {checked_at}（台灣時間）", f"- **最近內容更新：** {content_updated_at}（台灣時間）", "", "### App 版本", "", *status_rows, "", STATUS_END])
     pattern = re.compile(re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END), re.DOTALL)
     readme = pattern.sub(status, readme) if pattern.search(readme) else readme.rstrip() + "\n\n" + status + "\n"
     app_section = "\n".join(["## App", "", *app_rows])
@@ -325,10 +298,7 @@ def update_source():
             else:
                 statuses[name] = "🔴 Failed / No previous version"
     apps = order_apps(apps)
-    source = {"name": DISPLAY_NAME, "identifier": "com.chisources.source", "sourceURL": SOURCE_URL,
-              "subtitle": "iOS IPA Source", "description": SOURCE_DESCRIPTION,
-              "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources", "iconURL": SOURCE_ICON_URL,
-              "featuredApps": [a["bundleIdentifier"] for a in apps if a.get("bundleIdentifier")], "apps": apps, "news": []}
+    source = {"name": DISPLAY_NAME, "identifier": "com.chisources.source", "sourceURL": SOURCE_URL, "subtitle": "iOS IPA Source", "description": SOURCE_DESCRIPTION, "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources", "iconURL": SOURCE_ICON_URL, "featuredApps": [a["bundleIdentifier"] for a in apps if a.get("bundleIdentifier")], "apps": apps, "news": []}
     new_content = json.dumps(source, indent=2, ensure_ascii=False) + "\n"
     old_content = json.dumps(old_apps, indent=2, ensure_ascii=False) + "\n" if old_apps is not None else None
     content_changed = old_content != new_content
