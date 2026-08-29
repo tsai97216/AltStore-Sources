@@ -18,10 +18,7 @@ SOURCE_DESCRIPTION = "iOS IPA Source"
 
 
 def create_session():
-    retry = Retry(total=3, connect=3, read=3, status=3, backoff_factor=1,
-                  status_forcelist=(429, 500, 502, 503, 504),
-                  allowed_methods=frozenset({"GET", "HEAD"}),
-                  respect_retry_after_header=True)
+    retry = Retry(total=3, connect=3, read=3, status=3, backoff_factor=1, status_forcelist=(429, 500, 502, 503, 504), allowed_methods=frozenset({"GET", "HEAD"}), respect_retry_after_header=True)
     adapter = HTTPAdapter(max_retries=retry)
     session = requests.Session()
     session.mount("https://", adapter)
@@ -34,7 +31,6 @@ SESSION = create_session()
 def fetch_json(url):
     try:
         response = SESSION.get(url, timeout=15)
-        print(f"📡 {url} -> {response.status_code}")
         response.raise_for_status()
         return response.json()
     except (requests.RequestException, ValueError) as exc:
@@ -61,22 +57,26 @@ def validate_download_url(url, expected_size=0):
 
 
 def ensure_list(data, key=None):
-    if isinstance(data, list):
-        return data
+    if isinstance(data, list): return data
     if isinstance(data, dict):
         value = data.get(key, []) if key else []
         return value if isinstance(value, list) else []
     return []
 
 GITHUB_APPS = [
-    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "7DCEA0", "category": "entertainment", "asset_keywords": ["piliplus"]},
-    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytkace"]},
-    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
+    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "DDEDE3", "category": "entertainment", "asset_keywords": ["piliplus"]},
+    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "F8D0D8", "category": "entertainment", "asset_keywords": ["ytkace"]},
+    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "F8D0D8", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
 TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
-APP_STYLE = {"Facebook": {"color": "1877F2", "subtitle": "AppTesters"}, "Threads": {"color": "2D2D2D", "subtitle": "AppTesters"}, "Instagram": {"color": "E4405F", "subtitle": "AppTesters"}, "EeveeSpotify": {"color": "1DB954", "subtitle": "AppTesters"}}
+APP_STYLE = {
+    "Facebook": {"color": "9ABEF8", "subtitle": "AppTesters"},
+    "Threads": {"color": "A5A5A5", "subtitle": "AppTesters"},
+    "Instagram": {"color": "F2B0BF", "subtitle": "AppTesters"},
+    "EeveeSpotify": {"color": "84B195", "subtitle": "AppTesters"},
+}
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
@@ -93,8 +93,8 @@ def get_version(app):
     return str(versions[0].get("version", "0.0.0")) if versions and isinstance(versions[0], dict) else "0.0.0"
 
 
-def normalize_version(name, version_name):
-    text = str(version_name)
+def normalize_version(name, text):
+    text = str(text)
     if name == "YTMUltimate+":
         match = re.search(r"\band\s+(\d+\.\d+\.\d+)(?!\d)", text, re.IGNORECASE)
         return match.group(1) if match else text
