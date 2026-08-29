@@ -20,11 +20,11 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | **Facebook** | Facebook 修改版。 |
 | **Threads** | Threads 修改版。 |
 | **Instagram** | Instagram 修改版。 |
-| **EeveeSpotify** | Spotify 修改版。 |
+| **EeveeSpotify** | EeveeSpotify 修改版。 |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
-- **最近自動檢查：** 2026-08-29 11:33:06（台灣時間）
+- **最近自動檢查：** 2026-08-29 11:35:46（台灣時間）
 - **最近內容更新：** 2026-08-29 10:32:57（台灣時間）
 
 ### App 版本
