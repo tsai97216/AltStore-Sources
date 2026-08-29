@@ -155,9 +155,8 @@ APP_STYLE = {
     "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版", "description": "Facebook 修改版。"},
     "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版", "description": "Threads 修改版。"},
     "Instagram": {"color": "E4405F", "subtitle": "Instagram修改版", "description": "Instagram 修改版。"},
-    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版", "description": "Spotify 修改版。"},
+    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版", "description": "EeveeSpotify 修改版。"},
 }
-
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
@@ -393,6 +392,14 @@ def order_apps(apps):
     return sorted(apps, key=lambda app: rank.get(app.get("name"), len(rank)))
 
 
+def all_sources_failed(statuses):
+    """Return True only when every configured App source failed."""
+    expected = [app["name"] for app in GITHUB_APPS] + TARGET_APPS
+    if not expected:
+        return False
+    return all(statuses.get(name, "").startswith("🔴 Failed") for name in expected)
+
+
 def update_source():
     print(f"🚀 Updating {DISPLAY_NAME}...")
     apps = []
@@ -413,6 +420,8 @@ def update_source():
             print(f"↩️ Keeping previous version for {app['name']}")
             apps.append(previous)
             statuses[app["name"]] = "🔴 Failed / Kept previous"
+        else:
+            statuses[app["name"]] = "🔴 Failed / No previous version"
 
     remote = fetch_remote()
     if remote is None:
@@ -422,6 +431,8 @@ def update_source():
             if previous:
                 apps.append(previous)
                 statuses[name] = "🔴 Failed / Kept previous"
+            else:
+                statuses[name] = "🔴 Failed / No previous version"
     else:
         remote = keep_latest_only([
             app for app in remote
@@ -439,6 +450,8 @@ def update_source():
                 print(f"↩️ Keeping previous version for {name}")
                 apps.append(previous)
                 statuses[name] = "🔴 Failed / Kept previous"
+            else:
+                statuses[name] = "🔴 Failed / No previous version"
 
     apps = order_apps(apps)
     source = {
@@ -472,6 +485,10 @@ def update_source():
     print("🎉 DONE:", len(apps), "apps")
     print("🔎 Automatic check:", checked_at)
     print("📝 Content changed:", content_changed)
+
+    if all_sources_failed(statuses):
+        print("❌ ALL SOURCES FAILED: no source was updated successfully")
+        raise RuntimeError("All configured App sources failed")
 
 
 if __name__ == "__main__":
