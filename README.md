@@ -15,18 +15,17 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | App | 說明 |
 | --- | --- |
 | **PiliPlus** | 第三方 Bilibili 客戶端，提供增強播放與其他功能。 |
+| **YTKACE** | An open-source YouTube enhancement for iOS. |
+| **YTMUltimate+** | YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS. |
 | **Facebook** | Facebook 修改版。 |
 | **Threads** | Threads 修改版。 |
 | **Instagram** | Instagram 修改版。 |
 | **EeveeSpotify** | Spotify 修改版。 |
-
-未來可能會加入更多 App。
-
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
-- **最近自動檢查：** 2026-08-29 09:59:00（台灣時間）
-- **最近內容更新：** 2026-08-29 09:59:00（台灣時間）
+- **最近自動檢查：** 2026-08-29 10:32:57（台灣時間）
+- **最近內容更新：** 2026-08-29 10:32:57（台灣時間）
 
 ### App 版本
 
@@ -34,10 +33,11 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | --- | --- | --- |
 | PiliPlus | 2.1.2.1 | 2026-08-26 |
 | YTKACE | 0.9.0 | 2026-08-23 |
+| YTMUltimate+ | YTMU+_9.33.3_2.4.1_(81) | 2026-08-17 |
 | Facebook | 570.0.0 | 2026-07-22 |
 | Threads | 437.0.0 | 2026-07-07 |
-| EeveeSpotify | 9.1.56 | 2026-06-16 |
 | Instagram | 433.0.0 | 2026-06-10 |
+| EeveeSpotify | 9.1.56 | 2026-06-16 |
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
