@@ -67,6 +67,15 @@ LOCAL_APPS = [
         "subtitle": "第三方 Bilibili 客戶端",
         "desc": "...",
         "color": "7DCEA0",
+    },
+    {
+        "repo": "itzzace/ytkace",
+        "name": "YTKACE",
+        "bundleID": "com.google.ios.youtube",
+        "icon": "https://github.com/itzzace.png",
+        "subtitle": "YouTube 修改版",
+        "desc": "An open-source YouTube enhancement for iOS.",
+        "color": "FF0000",
     }
 ]
 
@@ -119,7 +128,6 @@ def _collect_dicts(data):
     if not isinstance(data, dict):
         return results
 
-    # 自己本身看起來像 App
     if any(key in data for key in (
         "bundleIdentifier",
         "bundleID",
@@ -145,7 +153,6 @@ def fetch_yt_repo():
 
     apps = _collect_dicts(data)
 
-    # 去除同一物件因巢狀結構造成的重複
     unique = []
     seen = set()
 
@@ -324,7 +331,6 @@ def _get_yt_version_entry(app):
     if isinstance(versions, list) and versions:
         return versions[0] if isinstance(versions[0], dict) else {}
 
-    # 有些來源直接把版本資訊放在 App 根節點
     if any(key in app for key in ("downloadURL", "version", "date", "size")):
         return app
 
