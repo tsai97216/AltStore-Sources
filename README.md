@@ -14,18 +14,17 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 | App | 原作者 | 原始倉庫 |
 | --- | --- | --- |
-| **PiliPlus** | bggRGjQaUbCoE | https://github.com/bggRGjQaUbCoE/PiliPlus |
-| **YTKACE** | itzzace | https://github.com/itzzace/ytkace |
-| **YTMUltimate+** | Mark02-2012 | https://github.com/Mark02-2012/YTMUltimatePLUS |
-| **Facebook** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
-| **Threads** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
-| **Instagram** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
-| **EeveeSpotify** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
-
+| **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) | [https://github.com/bggRGjQaUbCoE/PiliPlus](https://github.com/bggRGjQaUbCoE/PiliPlus) |
+| **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) | [https://github.com/itzzace/ytkace](https://github.com/itzzace/ytkace) |
+| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) | [https://github.com/Mark02-2012/YTMUltimatePLUS](https://github.com/Mark02-2012/YTMUltimatePLUS) |
+| **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
-- **最近自動檢查：** 2026-08-29 11:35:46（台灣時間）
+- **最近自動檢查：** 2026-08-29 11:48:39（台灣時間）
 - **最近內容更新：** 2026-08-29 10:32:57（台灣時間）
 
 ### App 版本
