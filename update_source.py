@@ -1,10 +1,13 @@
 import json
 import re
-import requests
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from packaging import version as pkg_version
+
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 FILENAME = "apps.json"
 README_FILENAME = "README.md"
@@ -14,17 +17,35 @@ SOURCE_URL = f"https://chi.qzz.io/AltStore-Sources/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.PNG"
 
 
+def create_session():
+    retry = Retry(
+        total=3,
+        connect=3,
+        read=3,
+        status=3,
+        backoff_factor=1,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=frozenset({"GET"}),
+        respect_retry_after_header=True,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session = requests.Session()
+    session.mount("https://", adapter)
+    session.headers.update({"User-Agent": "Chi-Sources-Updater/1.0", "Accept": "application/json"})
+    return session
+
+
+SESSION = create_session()
+
+
 def fetch_json(url):
     try:
-        headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
-        r = requests.get(url, headers=headers, timeout=15)
-        print(f"📡 {url} -> {r.status_code}")
-        if r.status_code != 200:
-            print("⚠️ fetch failed:", url)
-            return None
-        return r.json()
-    except Exception as e:
-        print("⚠️ fetch error:", url, e)
+        response = SESSION.get(url, timeout=15)
+        print(f"📡 {url} -> {response.status_code}")
+        response.raise_for_status()
+        return response.json()
+    except (requests.RequestException, ValueError) as e:
+        print(f"⚠️ fetch failed: {url} -> {e}")
         return None
 
 
@@ -37,7 +58,7 @@ def ensure_list(data, key=None):
     return []
 
 
-LOCAL_APPS = [
+GITHUB_APPS = [
     {
         "repo": "bggRGjQaUbCoE/PiliPlus",
         "name": "PiliPlus",
@@ -112,12 +133,16 @@ def keep_latest_only(apps):
 def build_from_github(app):
     try:
         url = f"https://api.github.com/repos/{app['repo']}/releases/latest"
-        r = requests.get(url, timeout=15)
-        r.raise_for_status()
-        data = r.json()
+        response = SESSION.get(url, timeout=15)
+        response.raise_for_status()
+        data = response.json()
         ipa = next((a for a in data.get("assets", []) if a.get("name", "").lower().endswith(".ipa")), None)
         if not ipa:
             print(f"⚠️ No IPA asset found for {app['name']}")
+            return None
+        version_name = (data.get("tag_name") or "").lstrip("v")
+        if not version_name:
+            print(f"⚠️ No release version found for {app['name']}")
             return None
         return {
             "name": app["name"],
@@ -130,15 +155,15 @@ def build_from_github(app):
             "category": "entertainment",
             "screenshots": [],
             "versions": [{
-                "version": (data.get("tag_name") or "").lstrip("v"),
+                "version": version_name,
                 "date": (data.get("published_at") or "")[:10],
                 "localizedDescription": (data.get("body") or "")[:500],
                 "downloadURL": ipa.get("browser_download_url", ""),
                 "size": ipa.get("size", 0),
             }],
         }
-    except Exception as e:
-        print("⚠️ GitHub build failed:", e)
+    except (requests.RequestException, ValueError) as e:
+        print(f"⚠️ GitHub build failed for {app['name']}: {e}")
         return None
 
 
@@ -165,6 +190,15 @@ def build_from_apptesters(app):
             "size": app.get("size", 0),
         }],
     }
+
+
+def find_previous_app(old_apps, bundle_id):
+    if not isinstance(old_apps, dict):
+        return None
+    for app in old_apps.get("apps", []):
+        if isinstance(app, dict) and app.get("bundleIdentifier") == bundle_id:
+            return app
+    return None
 
 
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
@@ -220,16 +254,26 @@ def update_source():
     except (FileNotFoundError, json.JSONDecodeError):
         pass
 
-    for app in LOCAL_APPS:
+    for app in GITHUB_APPS:
         result = build_from_github(app)
         if result:
             apps.append(result)
+        else:
+            previous = find_previous_app(old_apps, app["bundleID"])
+            if previous:
+                print(f"↩️ Keeping previous version for {app['name']}")
+                apps.append(previous)
 
     remote = keep_latest_only([a for a in fetch_remote() if isinstance(a, dict) and a.get("name") in TARGET_APPS])
     for app in remote:
         result = build_from_apptesters(app)
         if result:
             apps.append(result)
+        else:
+            previous = find_previous_app(old_apps, app.get("bundleIdentifier"))
+            if previous:
+                print(f"↩️ Keeping previous version for {app.get('name', 'Unknown')}")
+                apps.append(previous)
 
     source = {
         "name": DISPLAY_NAME,
@@ -239,7 +283,7 @@ def update_source():
         "description": f"{DISPLAY_NAME} auto curated source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources",
         "iconURL": SOURCE_ICON_URL,
-        "featuredApps": [a["bundleIdentifier"] for a in apps if isinstance(a, dict)],
+        "featuredApps": [a["bundleIdentifier"] for a in apps if isinstance(a, dict) and a.get("bundleIdentifier")],
         "apps": apps,
         "news": [],
     }
@@ -258,7 +302,6 @@ def update_source():
     print("🎉 DONE:", len(apps), "apps")
     print("🔎 Automatic check:", checked_at)
     print("📝 Content changed:", content_changed)
-    print("📦 Last content update:", content_updated_at)
 
 
 if __name__ == "__main__":
