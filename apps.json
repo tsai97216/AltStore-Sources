@@ -48,7 +48,7 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "0.9.0",
+          "version": "YTKACE v0.9.0",
           "date": "2026-08-23",
           "localizedDescription": "by @itzzace0\n\n**What's new:**\n- Updated for YouTube 21.33.6\n- Playback Recovery has been rebuilt from scratch\n- Default playback speed is now a menu with Follow YouTube, Match last used, and Custom\n- Japanese is now selectable in the language list\n- Added an Audit section to the README covering what was checked and what was found\n\n**Fixed:**\n- Fixed SponsorBlock markers jumping to the top of the screen after switching in or out of fullscreen\n- Added missing playback speed strings to every non-En",
           "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.0/YTKACE_0.9.0_YouTube_21.33.6.ipa",
@@ -68,7 +68,7 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "YTMU+_9.33.3_2.4.1_(81)",
+          "version": "9.33.3",
           "date": "2026-08-17",
           "localizedDescription": "**Changed**\r\nYTMusic version",
           "downloadURL": "https://github.com/Mark02-2012/YTMUltimatePLUS/releases/download/YTMU%2B_9.33.3_2.4.1_%2881%29/YTMUltimate%2B_2.4.1_9.33.3.ipa",
