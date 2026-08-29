@@ -99,7 +99,10 @@ APP_STYLE = {
 
 
 def fetch_remote():
-    return ensure_list(fetch_json(SOURCE_DATA_URL), "apps")
+    data = fetch_json(SOURCE_DATA_URL)
+    if data is None:
+        return None
+    return ensure_list(data, "apps")
 
 
 def get_version(app):
@@ -193,7 +196,7 @@ def build_from_apptesters(app):
 
 
 def find_previous_app(old_apps, bundle_id):
-    if not isinstance(old_apps, dict):
+    if not isinstance(old_apps, dict) or not bundle_id:
         return None
     for app in old_apps.get("apps", []):
         if isinstance(app, dict) and app.get("bundleIdentifier") == bundle_id:
@@ -264,16 +267,24 @@ def update_source():
                 print(f"↩️ Keeping previous version for {app['name']}")
                 apps.append(previous)
 
-    remote = keep_latest_only([a for a in fetch_remote() if isinstance(a, dict) and a.get("name") in TARGET_APPS])
-    for app in remote:
-        result = build_from_apptesters(app)
-        if result:
-            apps.append(result)
-        else:
-            previous = find_previous_app(old_apps, app.get("bundleIdentifier"))
+    remote = fetch_remote()
+    if remote is None:
+        print("⚠️ AppTesters source unavailable; keeping previous AppTesters apps")
+        for name in TARGET_APPS:
+            previous = next((a for a in (old_apps or {}).get("apps", []) if isinstance(a, dict) and a.get("name") == name), None)
             if previous:
-                print(f"↩️ Keeping previous version for {app.get('name', 'Unknown')}")
                 apps.append(previous)
+    else:
+        remote = keep_latest_only([a for a in remote if isinstance(a, dict) and a.get("name") in TARGET_APPS])
+        for app in remote:
+            result = build_from_apptesters(app)
+            if result:
+                apps.append(result)
+            else:
+                previous = find_previous_app(old_apps, app.get("bundleIdentifier"))
+                if previous:
+                    print(f"↩️ Keeping previous version for {app.get('name', 'Unknown')}")
+                    apps.append(previous)
 
     source = {
         "name": DISPLAY_NAME,
