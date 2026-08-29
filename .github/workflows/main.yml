@@ -28,7 +28,10 @@ jobs:
         run: pip install --disable-pip-version-check --no-input -r requirements.txt
 
       - name: Validate Python
-        run: python -m py_compile update_source.py validate_source.py
+        run: python -m py_compile update_source.py validate_source.py test_update_source.py
+
+      - name: Run tests
+        run: python -m pytest -q
 
       - name: Run script
         run: python update_source.py
