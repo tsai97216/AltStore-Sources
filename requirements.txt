@@ -1,2 +1,2 @@
-requests
-packaging
+requests>=2.32.0,<3
+packaging>=25.0,<27
