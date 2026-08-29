@@ -23,7 +23,16 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run script
-        run: python update_source.py
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path("update_source.py")
+          s = p.read_text(encoding="utf-8")
+          s = s.replace('"User-Agent": "Mozilla/5.0"', '"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/139.0.0.0 Safari/537.36"')
+          s = s.replace('"Accept": "application/json"', '"Accept": "application/json, text/plain, */*",\n            "Accept-Language": "zh-TW,zh;q=0.9,en;q=0.8",\n            "Referer": "https://repo.ballermc.com/",\n            "Cache-Control": "no-cache"')
+          p.write_text(s, encoding="utf-8")
+          PY
+          python update_source.py
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
