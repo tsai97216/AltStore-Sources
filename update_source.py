@@ -76,48 +76,9 @@ APP_STYLE = {
     "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版"},
 }
 
-YT_REPO = "https://repo.ballermc.com/repo.json"
-YT_STYLE = {
-    "YTPlusM": {"color": "FF4D4D", "subtitle": "YouTube 修改版"},
-    "YouTube Music Ultimate+": {"color": "FF4D4D", "subtitle": "YouTube Music 修改版"},
-}
-YT_NAME_ALIASES = {"ytplusm", "yt plus m", "youtube music ultimate+", "youtube music ultimate"}
-
 
 def fetch_remote():
     return ensure_list(fetch_json(SOURCE_DATA_URL), "apps")
-
-
-def _collect_dicts(data):
-    results = []
-    if isinstance(data, list):
-        for item in data:
-            results.extend(_collect_dicts(item))
-        return results
-    if not isinstance(data, dict):
-        return results
-    if any(key in data for key in ("bundleIdentifier", "bundleID", "downloadURL", "versions", "version")):
-        results.append(data)
-    for value in data.values():
-        if isinstance(value, (dict, list)):
-            results.extend(_collect_dicts(value))
-    return results
-
-
-def fetch_yt_repo():
-    data = fetch_json(YT_REPO)
-    if data is None:
-        print("❌ YT source unavailable")
-        return None
-    apps, seen = [], set()
-    for app in _collect_dicts(data):
-        marker = app.get("bundleIdentifier") or app.get("bundleID") or app.get("name") or id(app)
-        if marker in seen:
-            continue
-        seen.add(marker)
-        apps.append(app)
-    print(f"📦 YT source candidates: {len(apps)}")
-    return apps
 
 
 def get_version(app):
@@ -206,59 +167,6 @@ def build_from_apptesters(app):
     }
 
 
-def _yt_identity(app):
-    if not isinstance(app, dict):
-        return ""
-    return " ".join(str(app.get(k, "")) for k in ("name", "bundleIdentifier", "bundleID", "developerName", "developer") if app.get(k)).lower()
-
-
-def match_yt(app):
-    identity = _yt_identity(app)
-    matched = any(alias in identity for alias in YT_NAME_ALIASES)
-    if matched:
-        print("✅ YT matched:", app.get("name", "Unknown"), app.get("bundleIdentifier") or app.get("bundleID", ""))
-    return matched
-
-
-def _get_yt_version_entry(app):
-    versions = app.get("versions")
-    if isinstance(versions, list) and versions:
-        return versions[0] if isinstance(versions[0], dict) else {}
-    if any(key in app for key in ("downloadURL", "version", "date", "size")):
-        return app
-    return {}
-
-
-def build_from_yt(app):
-    if not isinstance(app, dict):
-        return None
-    identity = _yt_identity(app)
-    style = YT_STYLE["YTPlusM"] if "ytplusm" in identity or "yt plus m" in identity else YT_STYLE["YouTube Music Ultimate+"]
-    v = _get_yt_version_entry(app)
-    download_url = v.get("downloadURL") or v.get("downloadUrl") or v.get("download") or ""
-    if not download_url:
-        print(f"⚠️ YT matched but no download URL: {app.get('name', '')}")
-        return None
-    return {
-        "name": app.get("name", ""),
-        "bundleIdentifier": app.get("bundleIdentifier") or app.get("bundleID"),
-        "developerName": app.get("developerName") or app.get("developer") or "Ballermc",
-        "subtitle": style["subtitle"],
-        "localizedDescription": app.get("localizedDescription", ""),
-        "iconURL": app.get("iconURL") or app.get("icon"),
-        "tintColor": style["color"],
-        "category": "entertainment",
-        "screenshots": [],
-        "versions": [{
-            "version": str(v.get("version", "")),
-            "date": (v.get("date") or v.get("versionDate") or "")[:10],
-            "localizedDescription": v.get("localizedDescription", ""),
-            "downloadURL": download_url,
-            "size": v.get("size", 0),
-        }],
-    }
-
-
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
@@ -322,17 +230,6 @@ def update_source():
         result = build_from_apptesters(app)
         if result:
             apps.append(result)
-
-    yt_raw = fetch_yt_repo()
-    if yt_raw is None:
-        print("⚠️ YT update skipped: source unavailable")
-    else:
-        yt_apps = [a for a in yt_raw if match_yt(a)]
-        print(f"🎬 YT matched apps: {len(yt_apps)}")
-        for app in yt_apps:
-            result = build_from_yt(app)
-            if result:
-                apps.append(result)
 
     source = {
         "name": DISPLAY_NAME,
