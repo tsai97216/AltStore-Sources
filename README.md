@@ -12,15 +12,16 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 ## App
 
-| App | 說明 |
-| --- | --- |
-| **PiliPlus** | 第三方 Bilibili 客戶端，提供增強播放與其他功能。 |
-| **YTKACE** | An open-source YouTube enhancement for iOS. |
-| **YTMUltimate+** | YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS. |
-| **Facebook** | Facebook 修改版。 |
-| **Threads** | Threads 修改版。 |
-| **Instagram** | Instagram 修改版。 |
-| **EeveeSpotify** | EeveeSpotify 修改版。 |
+| App | 原作者 | 原始倉庫 |
+| --- | --- | --- |
+| **PiliPlus** | bggRGjQaUbCoE | https://github.com/bggRGjQaUbCoE/PiliPlus |
+| **YTKACE** | itzzace | https://github.com/itzzace/ytkace |
+| **YTMUltimate+** | Mark02-2012 | https://github.com/Mark02-2012/YTMUltimatePLUS |
+| **Facebook** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
+| **Threads** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
+| **Instagram** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
+| **EeveeSpotify** | AppTesters | https://github.com/apptesters-org/AppTesters_Repo |
+
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
@@ -41,11 +42,14 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
+## 說明
+
+本 Source 僅負責整理與自動更新各 App 的 IPA 資訊，App 與其內容均由原作者及來源專案維護。
+
 ## 致謝
 
 - AppTesters
-- PiliPlus
 - AltStore
 - SideStore
 
-所有權利均屬於各自的開發者。
+所有 App 與相關內容的權利均屬於各自的原作者與專案。
