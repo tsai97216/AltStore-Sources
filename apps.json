@@ -68,7 +68,7 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "YTMU+_9.33.3_2.4.1_(81)",
+          "version": "9.33.3",
           "date": "2026-08-17",
           "localizedDescription": "**Changed**\r\nYTMusic version",
           "downloadURL": "https://github.com/Mark02-2012/YTMUltimatePLUS/releases/download/YTMU%2B_9.33.3_2.4.1_%2881%29/YTMUltimate%2B_2.4.1_9.33.3.ipa",
@@ -86,15 +86,7 @@
       "tintColor": "1877F2",
       "category": "social",
       "screenshots": [],
-      "versions": [
-        {
-          "version": "570.0.0",
-          "date": "2026-07-22",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/22-07-2026/Facebook_570.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 198238456
-        }
-      ]
+      "versions": [{"version": "570.0.0", "date": "2026-07-22", "localizedDescription": "Injected with Premium", "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/22-07-2026/Facebook_570.0.0_Premium_%40thisismanpreets_apptesters.org.ipa", "size": 198238456}]
     },
     {
       "name": "Threads",
@@ -106,15 +98,7 @@
       "tintColor": "2D2D2D",
       "category": "social",
       "screenshots": [],
-      "versions": [
-        {
-          "version": "437.0.0",
-          "date": "2026-07-07",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/07-07-2026/Threads_437.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 96182135
-        }
-      ]
+      "versions": [{"version": "437.0.0", "date": "2026-07-07", "localizedDescription": "Injected with Premium", "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/07-07-2026/Threads_437.0.0_Premium_%40thisismanpreets_apptesters.org.ipa", "size": 96182135}]
     },
     {
       "name": "Instagram",
@@ -126,15 +110,7 @@
       "tintColor": "E4405F",
       "category": "social",
       "screenshots": [],
-      "versions": [
-        {
-          "version": "433.0.0",
-          "date": "2026-06-10",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/Instagram_433.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 282563167
-        }
-      ]
+      "versions": [{"version": "433.0.0", "date": "2026-06-10", "localizedDescription": "Injected with Premium", "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/Instagram_433.0.0_Premium_%40thisismanpreets_apptesters.org.ipa", "size": 282563167}]
     },
     {
       "name": "EeveeSpotify",
@@ -146,15 +122,7 @@
       "tintColor": "1DB954",
       "category": "entertainment",
       "screenshots": [],
-      "versions": [
-        {
-          "version": "9.1.56",
-          "date": "2026-06-16",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 118396730
-        }
-      ]
+      "versions": [{"version": "9.1.56", "date": "2026-06-16", "localizedDescription": "Injected with Premium", "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa", "size": 118396730}]
     }
   ],
   "news": []
