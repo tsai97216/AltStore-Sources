@@ -15,7 +15,7 @@ YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Sources"
 SOURCE_URL = f"https://chi.qzz.io/AltStore-Sources/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.PNG"
-SOURCE_DESCRIPTION = "原作者：bggRGjQaUbCoE、itzzace、Mark02-2012、AppTesters"
+SOURCE_DESCRIPTION = "iOS IPA Source"
 
 
 def create_session():
@@ -96,17 +96,17 @@ GITHUB_APPS = [
     {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus",
      "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus",
      "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
-     "subtitle": "第三方 Bilibili 客戶端", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
+     "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
      "color": "7DCEA0", "category": "entertainment", "asset_keywords": ["piliplus"]},
     {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube",
      "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace",
      "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
-     "subtitle": "YouTube 修改版", "desc": "An open-source YouTube enhancement for iOS.",
+     "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.",
      "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytkace"]},
     {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic",
      "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS",
      "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png",
-     "subtitle": "YouTube Music 修改版", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
+     "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
      "color": "FF0000", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
 
@@ -114,10 +114,10 @@ SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_R
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
 TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
 APP_STYLE = {
-    "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版", "description": "Facebook 修改版。"},
-    "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版", "description": "Threads 修改版。"},
-    "Instagram": {"color": "E4405F", "subtitle": "Instagram修改版", "description": "Instagram 修改版。"},
-    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版", "description": "EeveeSpotify 修改版。"},
+    "Facebook": {"color": "1877F2", "subtitle": "AppTesters"},
+    "Threads": {"color": "2D2D2D", "subtitle": "AppTesters"},
+    "Instagram": {"color": "E4405F", "subtitle": "AppTesters"},
+    "EeveeSpotify": {"color": "1DB954", "subtitle": "AppTesters"},
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
@@ -198,7 +198,7 @@ def build_from_apptesters(app):
     if not isinstance(app, dict):
         return None
     name = app.get("name")
-    style = APP_STYLE.get(name, {"color": None, "subtitle": "Imported", "description": ""})
+    style = APP_STYLE.get(name, {"color": None, "subtitle": "AppTesters"})
     url = app.get("downloadURL")
     size = app.get("size", 0)
     if not app.get("bundleIdentifier") or not url or not validate_download_url(url, size):
@@ -258,13 +258,11 @@ def update_readme(apps, checked_at, content_updated_at, statuses):
         author, repo_url = get_app_meta(app.get("name", "Unknown"))
         author_link = f"[{author}]({repo_url})" if repo_url else author
         app_rows.append(f"| **{app.get('name', 'Unknown')}** | {author_link} |")
-
     status_rows = ["| App | 狀態 | 最新版本 | 版本日期 |", "| --- | --- | --- | --- |"]
     for app in apps:
         versions = app.get("versions") or []
         latest = versions[0] if versions and isinstance(versions[0], dict) else {}
         status_rows.append(f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
-
     status = "\n".join([STATUS_START, "## 更新狀態", "", f"- **最近自動檢查：** {checked_at}（台灣時間）",
                          f"- **最近內容更新：** {content_updated_at}（台灣時間）", "", "### App 版本", "", *status_rows, "", STATUS_END])
     pattern = re.compile(re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END), re.DOTALL)
@@ -293,7 +291,6 @@ def update_source():
         old_apps = json.loads(Path(FILENAME).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         pass
-
     for app in GITHUB_APPS:
         result = build_from_github(app)
         previous = find_previous_app(old_apps, bundle_id=app["bundleID"])
@@ -305,7 +302,6 @@ def update_source():
             statuses[app["name"]] = "🔴 Failed / Kept previous"
         else:
             statuses[app["name"]] = "🔴 Failed / No previous version"
-
     remote = fetch_remote()
     if remote is None:
         for name in TARGET_APPS:
@@ -328,7 +324,6 @@ def update_source():
                 statuses[name] = "🔴 Failed / Kept previous"
             else:
                 statuses[name] = "🔴 Failed / No previous version"
-
     apps = order_apps(apps)
     source = {"name": DISPLAY_NAME, "identifier": "com.chisources.source", "sourceURL": SOURCE_URL,
               "subtitle": "iOS IPA Source", "description": SOURCE_DESCRIPTION,
