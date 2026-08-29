@@ -64,18 +64,18 @@ def ensure_list(data, key=None):
     return []
 
 GITHUB_APPS = [
-    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "DDEDE3", "category": "entertainment", "asset_keywords": ["piliplus"]},
-    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "F8D0D8", "category": "entertainment", "asset_keywords": ["ytkace"]},
-    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "F8D0D8", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
+    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "B8D2C1", "category": "entertainment", "asset_keywords": ["piliplus"]},
+    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytkace"]},
+    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
 TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
 APP_STYLE = {
-    "Facebook": {"color": "9ABEF8", "subtitle": "AppTesters"},
-    "Threads": {"color": "A5A5A5", "subtitle": "AppTesters"},
-    "Instagram": {"color": "F2B0BF", "subtitle": "AppTesters"},
-    "EeveeSpotify": {"color": "84B195", "subtitle": "AppTesters"},
+    "Facebook": {"color": "78A5E3", "subtitle": "AppTesters"},
+    "Threads": {"color": "858585", "subtitle": "AppTesters"},
+    "Instagram": {"color": "DC8FA1", "subtitle": "AppTesters"},
+    "EeveeSpotify": {"color": "669878", "subtitle": "AppTesters"},
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
