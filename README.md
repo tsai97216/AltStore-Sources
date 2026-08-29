@@ -12,15 +12,15 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 ## App
 
-| App | 原作者 | 原始倉庫 |
-| --- | --- | --- |
-| **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) | [PiliPlus](https://github.com/bggRGjQaUbCoE/PiliPlus) |
-| **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) | [ytkace](https://github.com/itzzace/ytkace) |
-| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) | [YTMUltimatePLUS](https://github.com/Mark02-2012/YTMUltimatePLUS) |
-| **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| App | 原作者 |
+| --- | --- |
+| **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) |
+| **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) |
+| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) |
+| **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
+| **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
