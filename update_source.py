@@ -65,8 +65,10 @@ GITHUB_APPS = [
         "bundleID": "com.bgg.piliplus",
         "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
         "subtitle": "第三方 Bilibili 客戶端",
-        "desc": "...",
+        "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
         "color": "7DCEA0",
+        "category": "entertainment",
+        "asset_keywords": ["piliplus"],
     },
     {
         "repo": "itzzace/ytkace",
@@ -76,6 +78,8 @@ GITHUB_APPS = [
         "subtitle": "YouTube 修改版",
         "desc": "An open-source YouTube enhancement for iOS.",
         "color": "FF0000",
+        "category": "entertainment",
+        "asset_keywords": ["ytkace"],
     },
     {
         "repo": "Mark02-2012/YTMUltimatePLUS",
@@ -85,17 +89,22 @@ GITHUB_APPS = [
         "subtitle": "YouTube Music 修改版",
         "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
         "color": "FF0000",
+        "category": "entertainment",
+        "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"],
     },
 ]
 
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
-TARGET_APPS = {"Facebook", "Threads", "Instagram", "EeveeSpotify"}
+TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
 APP_STYLE = {
-    "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版"},
-    "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版"},
-    "Instagram": {"color": "E4405F", "subtitle": "Instagram修改版"},
-    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版"},
+    "Facebook": {"color": "1877F2", "subtitle": "Facebook修改版", "description": "Facebook 修改版。"},
+    "Threads": {"color": "2D2D2D", "subtitle": "Threads修改版", "description": "Threads 修改版。"},
+    "Instagram": {"color": "E4405F", "subtitle": "Instagram修改版", "description": "Instagram 修改版。"},
+    "EeveeSpotify": {"color": "1DB954", "subtitle": "Spotify修改版", "description": "Spotify 修改版。"},
 }
+
+STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
+STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
 
 def fetch_remote():
@@ -133,20 +142,47 @@ def keep_latest_only(apps):
     return list(latest.values())
 
 
+def choose_ipa_asset(assets, app):
+    candidates = [
+        asset for asset in assets
+        if isinstance(asset, dict) and str(asset.get("name", "")).lower().endswith(".ipa")
+    ]
+    if not candidates:
+        return None
+
+    keywords = [str(keyword).lower() for keyword in app.get("asset_keywords", [])]
+
+    def score(asset):
+        name = str(asset.get("name", "")).lower()
+        keyword_score = max((len(keyword) for keyword in keywords if keyword in name), default=0)
+        return (keyword_score, asset.get("created_at") or "", name)
+
+    return max(candidates, key=score)
+
+
 def build_from_github(app):
     try:
         url = f"https://api.github.com/repos/{app['repo']}/releases/latest"
         response = SESSION.get(url, timeout=15)
         response.raise_for_status()
         data = response.json()
-        ipa = next((a for a in data.get("assets", []) if a.get("name", "").lower().endswith(".ipa")), None)
+
+        ipa = choose_ipa_asset(data.get("assets", []), app)
         if not ipa:
             print(f"⚠️ No IPA asset found for {app['name']}")
             return None
+
         version_name = (data.get("tag_name") or "").lstrip("v")
         if not version_name:
             print(f"⚠️ No release version found for {app['name']}")
             return None
+
+        download_url = ipa.get("browser_download_url")
+        if not download_url:
+            print(f"⚠️ IPA has no download URL for {app['name']}")
+            return None
+
+        print(f"📦 {app['name']}: {version_name} -> {ipa.get('name', 'unknown IPA')}")
         return {
             "name": app["name"],
             "bundleIdentifier": app["bundleID"],
@@ -155,13 +191,13 @@ def build_from_github(app):
             "localizedDescription": app["desc"],
             "iconURL": app["icon"],
             "tintColor": app["color"],
-            "category": "entertainment",
+            "category": app.get("category", "entertainment"),
             "screenshots": [],
             "versions": [{
                 "version": version_name,
                 "date": (data.get("published_at") or "")[:10],
                 "localizedDescription": (data.get("body") or "")[:500],
-                "downloadURL": ipa.get("browser_download_url", ""),
+                "downloadURL": download_url,
                 "size": ipa.get("size", 0),
             }],
         }
@@ -174,7 +210,10 @@ def build_from_apptesters(app):
     if not isinstance(app, dict):
         return None
     name = app.get("name")
-    style = APP_STYLE.get(name, {"color": None, "subtitle": "Imported"})
+    style = APP_STYLE.get(name, {"color": None, "subtitle": "Imported", "description": ""})
+    if not app.get("bundleIdentifier") or not app.get("downloadURL"):
+        print(f"⚠️ AppTesters entry incomplete: {name or 'Unknown'}")
+        return None
     return {
         "name": name,
         "bundleIdentifier": app.get("bundleIdentifier"),
@@ -183,7 +222,7 @@ def build_from_apptesters(app):
         "localizedDescription": app.get("localizedDescription", ""),
         "iconURL": app.get("iconURL") or app.get("icon"),
         "tintColor": style["color"],
-        "category": "social",
+        "category": "social" if name in {"Facebook", "Threads", "Instagram"} else "entertainment",
         "screenshots": [],
         "versions": [{
             "version": app.get("version", ""),
@@ -195,17 +234,17 @@ def build_from_apptesters(app):
     }
 
 
-def find_previous_app(old_apps, bundle_id):
-    if not isinstance(old_apps, dict) or not bundle_id:
+def find_previous_app(old_apps, bundle_id=None, name=None):
+    if not isinstance(old_apps, dict):
         return None
     for app in old_apps.get("apps", []):
-        if isinstance(app, dict) and app.get("bundleIdentifier") == bundle_id:
+        if not isinstance(app, dict):
+            continue
+        if bundle_id and app.get("bundleIdentifier") == bundle_id:
+            return app
+        if name and app.get("name") == name:
             return app
     return None
-
-
-STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
-STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
 
 
 def now_taiwan():
@@ -213,23 +252,46 @@ def now_taiwan():
 
 
 def get_previous_content_update(readme):
-    for pattern in [r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})", r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})"]:
+    for pattern in [
+        r"最近內容更新：\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
+        r"Last content update:\s*\*?\*?\s*(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})",
+    ]:
         match = re.search(pattern, readme)
         if match:
             return match.group(1)
     return "尚未更新"
 
 
+def get_readme_description(app):
+    name = app.get("name", "Unknown")
+    for github_app in GITHUB_APPS:
+        if github_app["name"] == name:
+            return github_app["desc"]
+    if name in APP_STYLE:
+        return APP_STYLE[name]["description"]
+    return app.get("subtitle", "")
+
+
 def update_readme(apps, checked_at, content_updated_at):
     path = Path(README_FILENAME)
     readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
-    rows = ["| App | 最新版本 | 版本日期 |", "| --- | --- | --- |"]
+
+    app_rows = ["| App | 說明 |", "| --- | --- |"]
+    for app in apps:
+        if not isinstance(app, dict):
+            continue
+        app_rows.append(f"| **{app.get('name', 'Unknown')}** | {get_readme_description(app)} |" )
+
+    status_rows = ["| App | 最新版本 | 版本日期 |", "| --- | --- | --- |"]
     for app in apps:
         if not isinstance(app, dict):
             continue
         versions = app.get("versions") or []
-        latest = versions[0] if versions else {}
-        rows.append(f"| {app.get('name', 'Unknown')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
+        latest = versions[0] if versions and isinstance(versions[0], dict) else {}
+        status_rows.append(
+            f"| {app.get('name', 'Unknown')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |"
+        )
+
     status = "\n".join([
         STATUS_START,
         "## 更新狀態",
@@ -239,13 +301,28 @@ def update_readme(apps, checked_at, content_updated_at):
         "",
         "### App 版本",
         "",
-        *rows,
+        *status_rows,
         "",
         STATUS_END,
     ])
+
     pattern = re.compile(re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END), re.DOTALL)
     readme = pattern.sub(status, readme) if pattern.search(readme) else readme.rstrip() + "\n\n" + status + "\n"
+
+    app_section = "\n".join(["## App", "", *app_rows])
+    app_pattern = re.compile(r"## App\n.*?(?=\n## 更新狀態|\n<!-- AUTO-UPDATE-STATUS:START -->)", re.DOTALL)
+    if app_pattern.search(readme):
+        readme = app_pattern.sub(app_section, readme)
+    else:
+        readme = readme.rstrip() + "\n\n" + app_section + "\n"
+
     path.write_text(readme, encoding="utf-8")
+
+
+def order_apps(apps):
+    preferred = [app["name"] for app in GITHUB_APPS] + TARGET_APPS
+    rank = {name: index for index, name in enumerate(preferred)}
+    return sorted(apps, key=lambda app: rank.get(app.get("name"), len(rank)))
 
 
 def update_source():
@@ -262,7 +339,7 @@ def update_source():
         if result:
             apps.append(result)
         else:
-            previous = find_previous_app(old_apps, app["bundleID"])
+            previous = find_previous_app(old_apps, bundle_id=app["bundleID"])
             if previous:
                 print(f"↩️ Keeping previous version for {app['name']}")
                 apps.append(previous)
@@ -271,21 +348,27 @@ def update_source():
     if remote is None:
         print("⚠️ AppTesters source unavailable; keeping previous AppTesters apps")
         for name in TARGET_APPS:
-            previous = next((a for a in (old_apps or {}).get("apps", []) if isinstance(a, dict) and a.get("name") == name), None)
+            previous = find_previous_app(old_apps, name=name)
             if previous:
                 apps.append(previous)
     else:
-        remote = keep_latest_only([a for a in remote if isinstance(a, dict) and a.get("name") in TARGET_APPS])
-        for app in remote:
-            result = build_from_apptesters(app)
+        remote = keep_latest_only([
+            app for app in remote
+            if isinstance(app, dict) and app.get("name") in TARGET_APPS
+        ])
+        remote_by_name = {app.get("name"): app for app in remote}
+        for name in TARGET_APPS:
+            app = remote_by_name.get(name)
+            result = build_from_apptesters(app) if app else None
             if result:
                 apps.append(result)
             else:
-                previous = find_previous_app(old_apps, app.get("bundleIdentifier"))
+                previous = find_previous_app(old_apps, name=name)
                 if previous:
-                    print(f"↩️ Keeping previous version for {app.get('name', 'Unknown')}")
+                    print(f"↩️ Keeping previous version for {name}")
                     apps.append(previous)
 
+    apps = order_apps(apps)
     source = {
         "name": DISPLAY_NAME,
         "identifier": f"com.{DISPLAY_NAME.lower().replace(' ', '')}.source",
@@ -294,7 +377,11 @@ def update_source():
         "description": f"{DISPLAY_NAME} auto curated source",
         "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources",
         "iconURL": SOURCE_ICON_URL,
-        "featuredApps": [a["bundleIdentifier"] for a in apps if isinstance(a, dict) and a.get("bundleIdentifier")],
+        "featuredApps": [
+            app["bundleIdentifier"]
+            for app in apps
+            if isinstance(app, dict) and app.get("bundleIdentifier")
+        ],
         "apps": apps,
         "news": [],
     }
