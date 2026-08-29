@@ -14,13 +14,13 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 
 | App | 原作者 | 原始倉庫 |
 | --- | --- | --- |
-| **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) | [https://github.com/bggRGjQaUbCoE/PiliPlus](https://github.com/bggRGjQaUbCoE/PiliPlus) |
-| **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) | [https://github.com/itzzace/ytkace](https://github.com/itzzace/ytkace) |
-| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) | [https://github.com/Mark02-2012/YTMUltimatePLUS](https://github.com/Mark02-2012/YTMUltimatePLUS) |
-| **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
-| **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [https://github.com/apptesters-org/AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) | [PiliPlus](https://github.com/bggRGjQaUbCoE/PiliPlus) |
+| **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) | [ytkace](https://github.com/itzzace/ytkace) |
+| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) | [YTMUltimatePLUS](https://github.com/Mark02-2012/YTMUltimatePLUS) |
+| **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
+| **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) | [AppTesters_Repo](https://github.com/apptesters-org/AppTesters_Repo) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
@@ -44,11 +44,3 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 ## 說明
 
 本 Source 僅負責整理與自動更新各 App 的 IPA 資訊，App 與其內容均由原作者及來源專案維護。
-
-## 致謝
-
-- AppTesters
-- AltStore
-- SideStore
-
-所有 App 與相關內容的權利均屬於各自的原作者與專案。
