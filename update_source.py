@@ -25,7 +25,7 @@ def create_session():
         status=3,
         backoff_factor=1,
         status_forcelist=(429, 500, 502, 503, 504),
-        allowed_methods=frozenset({"GET"}),
+        allowed_methods=frozenset({"GET", "HEAD"}),
         respect_retry_after_header=True,
     )
     adapter = HTTPAdapter(max_retries=retry)
@@ -47,6 +47,61 @@ def fetch_json(url):
     except (requests.RequestException, ValueError) as e:
         print(f"⚠️ fetch failed: {url} -> {e}")
         return None
+
+
+def validate_download_url(url, expected_size=0):
+    """Lightweight validation without downloading the complete IPA."""
+    if not isinstance(url, str) or not url.startswith("https://"):
+        print(f"⚠️ Invalid download URL: {url}")
+        return False
+
+    try:
+        response = SESSION.head(url, allow_redirects=True, timeout=15)
+        if response.status_code in (405, 501):
+            response.close()
+            response = SESSION.get(
+                url,
+                headers={"Range": "bytes=0-0"},
+                allow_redirects=True,
+                timeout=15,
+                stream=True,
+            )
+
+        if response.status_code not in (200, 206):
+            print(f"⚠️ IPA URL unavailable: {url} -> {response.status_code}")
+            response.close()
+            return False
+
+        content_length = response.headers.get("Content-Length")
+        if content_length is not None:
+            try:
+                if int(content_length) <= 0:
+                    print(f"⚠️ IPA URL has invalid Content-Length: {url}")
+                    response.close()
+                    return False
+            except ValueError:
+                print(f"⚠️ IPA URL has invalid Content-Length header: {url}")
+                response.close()
+                return False
+
+        if expected_size and content_length:
+            try:
+                if int(content_length) != int(expected_size):
+                    print(
+                        f"⚠️ IPA size mismatch: expected {expected_size}, got {content_length}"
+                    )
+                    response.close()
+                    return False
+            except ValueError:
+                print(f"⚠️ Invalid expected IPA size for: {url}")
+                response.close()
+                return False
+
+        response.close()
+        return True
+    except requests.RequestException as e:
+        print(f"⚠️ IPA URL validation failed: {url} -> {e}")
+        return False
 
 
 def ensure_list(data, key=None):
@@ -182,6 +237,11 @@ def build_from_github(app):
             print(f"⚠️ IPA has no download URL for {app['name']}")
             return None
 
+        size = ipa.get("size", 0)
+        if not validate_download_url(download_url, size):
+            print(f"⚠️ Download URL validation failed for {app['name']}")
+            return None
+
         print(f"📦 {app['name']}: {version_name} -> {ipa.get('name', 'unknown IPA')}")
         return {
             "name": app["name"],
@@ -198,7 +258,7 @@ def build_from_github(app):
                 "date": (data.get("published_at") or "")[:10],
                 "localizedDescription": (data.get("body") or "")[:500],
                 "downloadURL": download_url,
-                "size": ipa.get("size", 0),
+                "size": size,
             }],
         }
     except (requests.RequestException, ValueError) as e:
@@ -214,6 +274,13 @@ def build_from_apptesters(app):
     if not app.get("bundleIdentifier") or not app.get("downloadURL"):
         print(f"⚠️ AppTesters entry incomplete: {name or 'Unknown'}")
         return None
+
+    download_url = app.get("downloadURL")
+    size = app.get("size", 0)
+    if not validate_download_url(download_url, size):
+        print(f"⚠️ Download URL validation failed for {name or 'Unknown'}")
+        return None
+
     return {
         "name": name,
         "bundleIdentifier": app.get("bundleIdentifier"),
@@ -228,8 +295,8 @@ def build_from_apptesters(app):
             "version": app.get("version", ""),
             "date": app.get("versionDate", ""),
             "localizedDescription": app.get("localizedDescription", ""),
-            "downloadURL": app.get("downloadURL"),
-            "size": app.get("size", 0),
+            "downloadURL": download_url,
+            "size": size,
         }],
     }
 
