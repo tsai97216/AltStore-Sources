@@ -53,8 +53,7 @@ def validate_download_url(url, expected_size=0):
         response = SESSION.head(url, allow_redirects=True, timeout=15)
         if response.status_code in (405, 501):
             response.close()
-            response = SESSION.get(url, headers={"Range": "bytes=0-0"},
-                                   allow_redirects=True, timeout=15, stream=True)
+            response = SESSION.get(url, headers={"Range": "bytes=0-0"}, allow_redirects=True, timeout=15, stream=True)
         if response.status_code not in (200, 206):
             print(f"⚠️ IPA URL unavailable: {url} -> {response.status_code}")
             response.close()
@@ -249,22 +248,16 @@ def get_app_meta(name):
     return "Unknown", ""
 
 
-def get_readme_description(app):
-    name = app.get("name", "Unknown")
-    author, repo_url = get_app_meta(name)
-    return f"[{author}]({repo_url})" if repo_url else author
-
-
 def update_readme(apps, checked_at, content_updated_at, statuses):
     path = Path(README_FILENAME)
     readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
-    app_rows = ["| App | 原作者 | 原始倉庫 |", "| --- | --- | --- |"]
+    app_rows = ["| App | 原作者 |", "| --- | --- |"]
     for app in apps:
         if not isinstance(app, dict):
             continue
         author, repo_url = get_app_meta(app.get("name", "Unknown"))
-        repo_link = f"[{repo_url}]({repo_url})" if repo_url else "-"
-        app_rows.append(f"| **{app.get('name', 'Unknown')}** | [{author}]({repo_url}) | {repo_link} |")
+        author_link = f"[{author}]({repo_url})" if repo_url else author
+        app_rows.append(f"| **{app.get('name', 'Unknown')}** | {author_link} |")
 
     status_rows = ["| App | 狀態 | 最新版本 | 版本日期 |", "| --- | --- | --- | --- |"]
     for app in apps:
