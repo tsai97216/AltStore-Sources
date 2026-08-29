@@ -272,7 +272,7 @@ def get_readme_description(app):
     return app.get("subtitle", "")
 
 
-def update_readme(apps, checked_at, content_updated_at):
+def update_readme(apps, checked_at, content_updated_at, statuses):
     path = Path(README_FILENAME)
     readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
 
@@ -280,16 +280,17 @@ def update_readme(apps, checked_at, content_updated_at):
     for app in apps:
         if not isinstance(app, dict):
             continue
-        app_rows.append(f"| **{app.get('name', 'Unknown')}** | {get_readme_description(app)} |" )
+        app_rows.append(f"| **{app.get('name', 'Unknown')}** | {get_readme_description(app)} |")
 
-    status_rows = ["| App | 最新版本 | 版本日期 |", "| --- | --- | --- |"]
+    status_rows = ["| App | 狀態 | 最新版本 | 版本日期 |", "| --- | --- | --- | --- |"]
     for app in apps:
         if not isinstance(app, dict):
             continue
         versions = app.get("versions") or []
         latest = versions[0] if versions and isinstance(versions[0], dict) else {}
         status_rows.append(
-            f"| {app.get('name', 'Unknown')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |"
+            f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | "
+            f"{latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |"
         )
 
     status = "\n".join([
@@ -328,6 +329,7 @@ def order_apps(apps):
 def update_source():
     print(f"🚀 Updating {DISPLAY_NAME}...")
     apps = []
+    statuses = {}
     old_apps = None
     try:
         old_apps = json.loads(Path(FILENAME).read_text(encoding="utf-8"))
@@ -336,13 +338,14 @@ def update_source():
 
     for app in GITHUB_APPS:
         result = build_from_github(app)
+        previous = find_previous_app(old_apps, bundle_id=app["bundleID"])
         if result:
             apps.append(result)
-        else:
-            previous = find_previous_app(old_apps, bundle_id=app["bundleID"])
-            if previous:
-                print(f"↩️ Keeping previous version for {app['name']}")
-                apps.append(previous)
+            statuses[app["name"]] = "🟢 Updated" if not previous or get_version(result) != get_version(previous) else "⚪ Unchanged"
+        elif previous:
+            print(f"↩️ Keeping previous version for {app['name']}")
+            apps.append(previous)
+            statuses[app["name"]] = "🔴 Failed / Kept previous"
 
     remote = fetch_remote()
     if remote is None:
@@ -351,6 +354,7 @@ def update_source():
             previous = find_previous_app(old_apps, name=name)
             if previous:
                 apps.append(previous)
+                statuses[name] = "🔴 Failed / Kept previous"
     else:
         remote = keep_latest_only([
             app for app in remote
@@ -360,13 +364,14 @@ def update_source():
         for name in TARGET_APPS:
             app = remote_by_name.get(name)
             result = build_from_apptesters(app) if app else None
+            previous = find_previous_app(old_apps, name=name)
             if result:
                 apps.append(result)
-            else:
-                previous = find_previous_app(old_apps, name=name)
-                if previous:
-                    print(f"↩️ Keeping previous version for {name}")
-                    apps.append(previous)
+                statuses[name] = "🟢 Updated" if not previous or get_version(result) != get_version(previous) else "⚪ Unchanged"
+            elif previous:
+                print(f"↩️ Keeping previous version for {name}")
+                apps.append(previous)
+                statuses[name] = "🔴 Failed / Kept previous"
 
     apps = order_apps(apps)
     source = {
@@ -395,7 +400,7 @@ def update_source():
     readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
     previous_content_update = get_previous_content_update(readme)
     content_updated_at = checked_at if content_changed else previous_content_update
-    update_readme(apps, checked_at, content_updated_at)
+    update_readme(apps, checked_at, content_updated_at, statuses)
 
     print("🎉 DONE:", len(apps), "apps")
     print("🔎 Automatic check:", checked_at)
