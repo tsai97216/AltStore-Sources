@@ -5,9 +5,14 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
+concurrency:
+  group: auto-update-chi-source
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     permissions:
       contents: write
@@ -20,7 +25,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install deps
-        run: pip install -r requirements.txt
+        run: pip install --disable-pip-version-check --no-input -r requirements.txt
 
       - name: Validate Python
         run: python -m py_compile update_source.py validate_source.py
