@@ -5,7 +5,7 @@
   "subtitle": "iOS IPA Source",
   "description": "iOS IPA Source",
   "website": "https://github.com/tsai97216/AltStore-Sources",
-  "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/source_icon.PNG",
+  "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/source_icon.png",
   "featuredApps": [
     "com.bgg.piliplus",
     "com.google.ios.youtube",
