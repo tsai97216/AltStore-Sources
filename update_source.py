@@ -10,7 +10,7 @@ from urllib3.util.retry import Retry
 
 FILENAME = "apps.json"
 README_FILENAME = "README.md"
-YOUR_GITHUB_ID = "tsai97216"
+YOUR_GITHUB_ID = "tsai97217"
 DISPLAY_NAME = "Chi Sources"
 SOURCE_URL = f"https://chi.qzz.io/AltStore-Sources/{FILENAME}"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.png"
@@ -64,8 +64,8 @@ def ensure_list(data, key=None):
     return []
 
 GITHUB_APPS = [
-    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "B8D2C1", "category": "entertainment", "asset_keywords": ["piliplus"]},
-    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytkace"]},
+    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97217/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "B8D2C1", "category": "entertainment", "asset_keywords": ["piliplus"]},
+    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97217/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytkace"]},
     {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
@@ -131,6 +131,28 @@ def choose_ipa_asset(assets, app):
     return max(candidates, key=score)
 
 
+def choose_highest_ytkace_ipa(assets):
+    candidates = []
+    for asset in assets:
+        if not isinstance(asset, dict):
+            continue
+        name = str(asset.get("name", ""))
+        if not name.lower().endswith(".ipa"):
+            continue
+        match = re.search(r"(?:youtube|yt)\s*[vV]?\s*(\d+\.\d+\.\d+)", name, re.IGNORECASE)
+        if not match:
+            continue
+        try:
+            youtube_version = pkg_version.parse(match.group(1))
+        except Exception:
+            continue
+        candidates.append((youtube_version, asset))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda item: item[0], reverse=True)
+    return candidates[0][1]
+
+
 def get_latest_special_release(app):
     try:
         response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases?per_page=30", timeout=15)
@@ -146,7 +168,6 @@ def get_latest_special_release(app):
                 if not re.search(r"\band\s+\d+\.\d+\.\d+\b", name, re.IGNORECASE): continue
             elif app["name"] == "YTKACE":
                 if "ytkace" not in lower: continue
-                if not re.search(r"(?:youtube|yt)\s*[vV]?\s*\d+\.\d+\.\d+\b", name, re.IGNORECASE): continue
             candidates.append(release)
         if not candidates: return None
         candidates.sort(key=lambda r: r.get("published_at") or r.get("created_at") or "", reverse=True)
@@ -162,10 +183,16 @@ def build_from_github(app):
             response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases/latest", timeout=15)
             response.raise_for_status(); data = response.json()
         if not data: return None
-        ipa = choose_ipa_asset(data.get("assets", []), app)
-        if not ipa: return None
-        raw_version = data.get("name") or data.get("tag_name") or ""
-        version_name = normalize_version(app["name"], raw_version.lstrip("v"))
+        if app.get("name") == "YTKACE":
+            ipa = choose_highest_ytkace_ipa(data.get("assets", []))
+            if not ipa: return None
+            version_match = re.search(r"(?:youtube|yt)\s*[vV]?\s*(\d+\.\d+\.\d+)", str(ipa.get("name", "")), re.IGNORECASE)
+            version_name = version_match.group(1) if version_match else ""
+        else:
+            ipa = choose_ipa_asset(data.get("assets", []), app)
+            if not ipa: return None
+            raw_version = data.get("name") or data.get("tag_name") or ""
+            version_name = normalize_version(app["name"], raw_version.lstrip("v"))
         download_url, size = ipa.get("browser_download_url"), ipa.get("size", 0)
         if not version_name or not download_url or not validate_download_url(download_url, size): return None
         return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": app["subtitle"], "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10], "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
@@ -233,22 +260,27 @@ def update_source():
             apps.append(result); statuses[app["name"]] = "🟢 Updated" if not previous or get_version(result) != get_version(previous) else "⚪ Unchanged"
         elif previous:
             apps.append(previous); statuses[app["name"]] = "🔴 Failed / Kept previous"
-        else: statuses[app["name"]] = "🔴 Failed / No previous version"
-    remote = fetch_remote()
+        else:
+            statuses[app["name"]] = "🔴 Failed / No previous version"
+    remote_apps = fetch_remote()
+    remote_by_name = {app.get("name"): app for app in remote_apps if isinstance(app, dict)}
     for name in TARGET_APPS:
-        previous = find_previous_app(old_apps, name=name); remote_app = next((a for a in keep_latest_only([x for x in (remote or []) if isinstance(x, dict) and x.get("name") == name])), None) if remote is not None else None
-        result = build_from_apptesters(remote_app) if remote_app else None
+        result = build_from_apptesters(remote_by_name.get(name)); previous = find_previous_app(old_apps, name=name)
         if result:
             apps.append(result); statuses[name] = "🟢 Updated" if not previous or get_version(result) != get_version(previous) else "⚪ Unchanged"
         elif previous:
             apps.append(previous); statuses[name] = "🔴 Failed / Kept previous"
-        else: statuses[name] = "🔴 Failed / No previous version"
-    apps = order_apps(apps)
-    source = {"name": DISPLAY_NAME, "identifier": "com.chisources.source", "sourceURL": SOURCE_URL, "subtitle": "iOS IPA Source", "description": SOURCE_DESCRIPTION, "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources", "iconURL": SOURCE_ICON_URL, "featuredApps": [a["bundleIdentifier"] for a in apps if a.get("bundleIdentifier")], "apps": apps, "news": []}
-    new_content = json.dumps(source, indent=2, ensure_ascii=False) + "\n"; old_content = json.dumps(old_apps, indent=2, ensure_ascii=False) + "\n" if old_apps is not None else None
-    content_changed = old_content != new_content; Path(FILENAME).write_text(new_content, encoding="utf-8")
-    checked_at = now_taiwan(); readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""; previous_update = get_previous_content_update(readme)
-    update_readme(apps, checked_at, checked_at if content_changed else previous_update, statuses)
-    print("🎉 DONE:", len(apps), "apps")
+        else:
+            statuses[name] = "🔴 Failed / No previous version"
+    apps = order_apps(keep_latest_only(apps))
+    if not apps: raise RuntimeError("No valid apps were produced")
+    Path(FILENAME).write_text(json.dumps({"name": DISPLAY_NAME, "identifier": "com.chisources.source", "sourceURL": SOURCE_URL, "subtitle": SOURCE_DESCRIPTION, "description": SOURCE_DESCRIPTION, "website": f"https://github.com/{YOUR_GITHUB_ID}/AltStore-Sources", "iconURL": SOURCE_ICON_URL, "featuredApps": [app["bundleIdentifier"] for app in apps], "apps": apps, "news": []}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
+    checked_at = now_taiwan()
+    content_updated_at = checked_at if any(statuses.get(app.get("name")) == "🟢 Updated" for app in apps) else get_previous_content_update(readme)
+    update_readme(apps, checked_at, content_updated_at, statuses)
+    print("✅ Source updated successfully")
 
-if __name__ == "__main__": update_source()
+
+if __name__ == "__main__":
+    update_source()
