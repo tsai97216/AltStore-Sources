@@ -131,27 +131,30 @@ def choose_ipa_asset(assets, app):
     return max(candidates, key=score)
 
 
-def choose_highest_ytkace_ipa(assets):
+def choose_highest_ytkace_ipa(releases):
     candidates = []
-    for asset in assets:
-        if not isinstance(asset, dict):
+    for release in releases:
+        if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"):
             continue
-        name = str(asset.get("name", ""))
-        if not name.lower().endswith(".ipa"):
-            continue
-        match = re.search(r"(?:youtube|yt)\s*[vV]?\s*(\d+\.\d+\.\d+)", name, re.IGNORECASE)
-        if not match:
-            continue
-        try:
-            youtube_version = pkg_version.parse(match.group(1))
-        except Exception:
-            continue
-        candidates.append((youtube_version, asset))
+        for asset in release.get("assets", []):
+            if not isinstance(asset, dict):
+                continue
+            name = str(asset.get("name", ""))
+            if not name.lower().endswith(".ipa"):
+                continue
+            match = re.search(r"(?:youtube|yt)[_\\s-]*[vV]?[_\\s-]*(\\d+\\.\\d+\\.\\d+)", name, re.IGNORECASE)
+            if not match:
+                continue
+            candidates.append((pkg_version.parse(match.group(1)), release, asset))
     if not candidates:
+        print("⚠️ YTKACE: no IPA with a YouTube version found")
         return None
-    candidates.sort(key=lambda item: item[0], reverse=True)
-    return candidates[0][1]
-
+    candidates.sort(key=lambda x: (x[0], x[1].get("published_at") or x[1].get("created_at") or ""), reverse=True)
+    for v, release, asset in candidates:
+        print(f"🔎 YTKACE candidate: YouTube {v} -> {asset.get('name')} ({release.get('name') or release.get('tag_name')})")
+    v, release, asset = candidates[0]
+    print(f"✅ YTKACE selected: YouTube {v} -> {asset.get('name')}")
+    return release, asset
 
 def get_latest_special_release(app):
     try:
@@ -184,9 +187,12 @@ def build_from_github(app):
             response.raise_for_status(); data = response.json()
         if not data: return None
         if app.get("name") == "YTKACE":
-            ipa = choose_highest_ytkace_ipa(data.get("assets", []))
-            if not ipa: return None
-            version_match = re.search(r"(?:youtube|yt)\s*[vV]?\s*(\d+\.\d+\.\d+)", str(ipa.get("name", "")), re.IGNORECASE)
+            response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases?per_page=100", timeout=15)
+            response.raise_for_status()
+            selected = choose_highest_ytkace_ipa(response.json())
+            if not selected: return None
+            data, ipa = selected
+            version_match = re.search(r"(?:youtube|yt)[_\\s-]*[vV]?[_\\s-]*(\\d+\\.\\d+\\.\\d+)", str(ipa.get("name", "")), re.IGNORECASE)
             version_name = version_match.group(1) if version_match else ""
         else:
             ipa = choose_ipa_asset(data.get("assets", []), app)
