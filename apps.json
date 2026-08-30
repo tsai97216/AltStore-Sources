@@ -4,8 +4,8 @@
   "sourceURL": "https://chi.qzz.io/AltStore-Sources/apps.json",
   "subtitle": "iOS IPA Source",
   "description": "iOS IPA Source",
-  "website": "https://github.com/tsai97216/AltStore-Sources",
-  "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/source_icon.png",
+  "website": "https://github.com/tsai97217/AltStore-Sources",
+  "iconURL": "https://raw.githubusercontent.com/tsai97217/AltStore-Sources/main/source_icon.png",
   "featuredApps": [
     "com.bgg.piliplus",
     "com.google.ios.youtube",
@@ -22,7 +22,7 @@
       "developerName": "bggRGjQaUbCoE",
       "subtitle": "bggRGjQaUbCoE",
       "localizedDescription": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
-      "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
+      "iconURL": "https://raw.githubusercontent.com/tsai97217/AltStore-Sources/main/piliplus.png",
       "tintColor": "B8D2C1",
       "category": "entertainment",
       "screenshots": [],
@@ -88,11 +88,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "570.0.0",
-          "date": "2026-07-22",
+          "version": "524.1.0",
+          "date": "2025-08-02",
           "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/22-07-2026/Facebook_570.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 198238456
+          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/02-08-2025/Facebook_524.1.0_Premium_%40thisismanpreets_apptesters.org.ipa",
+          "size": 153389235
         }
       ]
     },
@@ -108,11 +108,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "437.0.0",
-          "date": "2026-07-07",
+          "version": "392.1.0",
+          "date": "2025-08-05",
           "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/07-07-2026/Threads_437.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 96182135
+          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/05-08-2025/Threads_392.1.0_Premium_%40thisismanpreets_apptesters.org.ipa",
+          "size": 54406846
         }
       ]
     },
@@ -128,11 +128,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "433.0.0",
-          "date": "2026-06-10",
+          "version": "392.0.0",
+          "date": "2025-08-08",
           "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/10-06-2026/Instagram_433.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 282563167
+          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/08-08-2025/Instagram_392.0.0_Premium_%40thisismanpreets_apptesters.org.ipa",
+          "size": 242482307
         }
       ]
     },
@@ -148,11 +148,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "9.1.56",
-          "date": "2026-06-16",
+          "version": "9.0.68",
+          "date": "2025-08-14",
           "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 118396730
+          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/14-08-2025/EeveeSpotify_9.0.68_Premium_%40thisismanpreets_apptesters.org.ipa",
+          "size": 84193298
         }
       ]
     }
