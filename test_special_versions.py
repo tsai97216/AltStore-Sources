@@ -6,17 +6,17 @@ def test_choose_highest_ytkace_ipa():
         {
             "name": "YTKACE old",
             "published_at": "2026-08-29T10:00:00Z",
-            "assets": [{"name": "YTKACE_21.33.2.ipa"}],
+            "assets": [{"name": "YTKACE_0.9.0_YouTube_21.33.6.ipa"}],
         },
         {
             "name": "YTKACE new",
             "published_at": "2026-08-30T10:00:00Z",
-            "assets": [{"name": "YTKACE_21.34.3.ipa"}],
+            "assets": [{"name": "YTKACE_0.9.1_YouTube_21.34.3.ipa"}],
         },
     ]
     release, asset = updater.choose_highest_ytkace_ipa(releases)
     assert release["name"] == "YTKACE new"
-    assert asset["name"] == "YTKACE_21.34.3.ipa"
+    assert asset["name"] == "YTKACE_0.9.1_YouTube_21.34.3.ipa"
 
 
 def test_choose_highest_ytkace_ipa_ignores_prerelease_and_non_ipa():
@@ -25,20 +25,20 @@ def test_choose_highest_ytkace_ipa_ignores_prerelease_and_non_ipa():
             "name": "YTKACE prerelease",
             "published_at": "2026-08-31T10:00:00Z",
             "prerelease": True,
-            "assets": [{"name": "YTKACE_99.99.99.ipa"}],
+            "assets": [{"name": "YTKACE_0.9.2_YouTube_99.99.99.ipa"}],
         },
         {
             "name": "YTKACE stable",
             "published_at": "2026-08-30T10:00:00Z",
             "assets": [
-                {"name": "YTKACE_21.34.3.zip"},
-                {"name": "YTKACE_21.34.3.ipa"},
+                {"name": "YTKACE_0.9.1_YouTube_21.34.3.zip"},
+                {"name": "YTKACE_0.9.1_YouTube_21.34.3.ipa"},
             ],
         },
     ]
     release, asset = updater.choose_highest_ytkace_ipa(releases)
     assert release["name"] == "YTKACE stable"
-    assert asset["name"] == "YTKACE_21.34.3.ipa"
+    assert asset["name"] == "YTKACE_0.9.1_YouTube_21.34.3.ipa"
 
 
 def test_choose_highest_ytkace_ipa_returns_none_without_matching_version():
