@@ -42,17 +42,17 @@
       "developerName": "itzzace",
       "subtitle": "itzzace",
       "localizedDescription": "An open-source YouTube enhancement for iOS.",
-      "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
+      "iconURL": "https://raw.githubusercontent.com/tsai97217/AltStore-Sources/main/YT.png",
       "tintColor": "E8A8B7",
       "category": "entertainment",
       "screenshots": [],
       "versions": [
         {
-          "version": "21.33.6",
-          "date": "2026-08-23",
-          "localizedDescription": "by @itzzace0",
-          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.0/YTKACE_0.9.0_YouTube_21.33.6.ipa",
-          "size": 132473869
+          "version": "21.34.3",
+          "date": "2026-08-29",
+          "localizedDescription": "by @itzzace0\n\nWhat’s new:\n• Updated for YouTube 21.34.3\n• Added a default startup tab option, so YouTube can open on any tab you choose\n• Added a Shorts session limit that stops endless scrolling after a set number\n\nFixed:\n• Fixed Save to Photos silently doing nothing, and it now confirms when a video is saved\n• Fixed Save to Photos on large videos, and it now explains when Photos cannot store the format\n• Fixed backing up settings producing an empty file with nothing in it\n• Reduced feed scroll",
+          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.1/YTKACE_0.9.1_YouTube_21.34.3.ipa",
+          "size": 133752298
         }
       ]
     },
