@@ -24,14 +24,14 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 
-- **最近自動檢查：** 2026-08-30 11:55:24（台灣時間）
-- **最近內容更新：** 2026-08-30 11:34:58（台灣時間）
+- **最近自動檢查：** 2026-08-30 12:35:55（台灣時間）
+- **最近內容更新：** 2026-08-30 12:35:55（台灣時間）
 
 ### App 版本
 
 | App | 狀態 | 最新版本 | 版本日期 |
 | --- | --- | --- | --- |
-| PiliPlus | ⚪ Unchanged | 2.1.2.2 | 2026-08-29 |
+| PiliPlus | 🟢 Updated | 2.1.2.3 | 2026-08-30 |
 | YTKACE | 🔴 Failed / Kept previous | 21.33.6 | 2026-08-23 |
 | YTMUltimate+ | ⚪ Unchanged | 9.33.3 | 2026-08-17 |
 | Facebook | ⚪ Unchanged | 524.1.0 | 2025-08-02 |
