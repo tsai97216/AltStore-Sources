@@ -48,11 +48,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "21.34.3",
-          "date": "2026-08-29",
-          "localizedDescription": "by @itzzace0\n\nWhat’s new:\n• Updated for YouTube 21.34.3\n• Added a default startup tab option, so YouTube can open on any tab you choose\n• Added a Shorts session limit that stops endless scrolling after a set number\n\nFixed:\n• Fixed Save to Photos silently doing nothing, and it now confirms when a video is saved\n• Fixed Save to Photos on large videos, and it now explains when Photos cannot store the format\n• Fixed backing up settings producing an empty file with nothing in it\n• Reduced feed scroll",
-          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.1/YTKACE_0.9.1_YouTube_21.34.3.ipa",
-          "size": 133752298
+          "version": "21.35.3",
+          "date": "2026-08-31",
+          "localizedDescription": "by @itzzace0\n\nWhat’s new:\n• Updated for YouTube 21.35.3\n• Added a save button to community post images, saved at full resolution\n• Added Posts to the tab bar, so it can be shown as a tab or set as the startup tab\n• Added a choice of where downloads are saved, between the YTKACE library, Photos, or asking each time\n• Added a custom hold speed with a slider from 0.25x to 5x, and the speed pill now shows the speed you set\n• Added a toggle to remove the ⋯ button from the action bar\n• Added a toggle ",
+          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.2/YTKACE_0.9.2_YouTube_21.35.3.ipa",
+          "size": 134278975
         }
       ]
     },
