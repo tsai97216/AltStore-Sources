@@ -23,7 +23,7 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
-- **最近自動檢查：** 2026-09-08 08:05:08（台灣時間）
+- **最近自動檢查：** 2026-09-08 13:35:51（台灣時間）
 - **最近內容更新：** 2026-09-05 13:15:17（台灣時間）
 
 | App | 狀態 | 最新版本 | 版本日期 |
