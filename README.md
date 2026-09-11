@@ -16,7 +16,7 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | --- | --- |
 | **PiliPlus** | [bggRGjQaUbCoE](https://github.com/bggRGjQaUbCoE/PiliPlus) |
 | **YTKACE** | [itzzace](https://github.com/itzzace/ytkace) |
-| **YTMUltimate+** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) |
+| **MaxMusic** | [Mark02-2012](https://github.com/Mark02-2012/YTMUltimatePLUS) |
 | **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 | **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 | **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
@@ -30,7 +30,7 @@ https://chi.qzz.io/AltStore-Sources/apps.json
 | --- | --- | --- | --- |
 | PiliPlus | ⚪ Unchanged | 2.1.3.1 | 2026-09-05 |
 | YTKACE | ⚪ Unchanged | 21.35.3 | 2026-08-31 |
-| YTMUltimate+ | ⚪ Unchanged | 9.34.4 | 2026-08-30 |
+| MaxMusic | ⚪ Unchanged | 9.34.4 | 2026-08-30 |
 | Facebook | ⚪ Unchanged | 570.0.0 | 2026-07-22 |
 | Threads | ⚪ Unchanged | 437.0.0 | 2026-07-07 |
 | Instagram | ⚪ Unchanged | 433.0.0 | 2026-06-10 |
