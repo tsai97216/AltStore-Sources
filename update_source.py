@@ -66,7 +66,7 @@ def ensure_list(data, key=None):
 GITHUB_APPS = [
     {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "B8D2C1", "category": "entertainment", "asset_keywords": ["piliplus"]},
     {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytkace"]},
-    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "YTMUltimate+", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytmultimate", "ytmusicultimate", "youtubemusic"]},
+    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "MaxMusic", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "MaxMusic is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["maxmusic", "ytmultimate", "ytmusicultimate", "youtubemusic"]},
 ]
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
@@ -95,7 +95,7 @@ def get_version(app):
 
 def normalize_version(name, text):
     text = str(text)
-    if name == "YTMUltimate+":
+    if name == "MaxMusic":
         match = re.search(r"\band\s+(\d+\.\d+\.\d+)(?!\d)", text, re.IGNORECASE)
         return match.group(1) if match else text
     if name == "YTKACE":
@@ -120,7 +120,7 @@ def keep_latest_only(apps):
 
 def choose_ipa_asset(assets, app):
     candidates = [a for a in assets if isinstance(a, dict) and str(a.get("name", "")).lower().endswith(".ipa")]
-    if app.get("name") == "YTMUltimate+":
+    if app.get("name") == "MaxMusic":
         preferred = [a for a in candidates if "no_ymp" not in str(a.get("name", "")).lower() and "no-ymp" not in str(a.get("name", "")).lower()]
         if preferred: candidates = preferred
     if not candidates: return None
@@ -167,7 +167,7 @@ def get_latest_special_release(app):
             if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"): continue
             name = str(release.get("name") or "")
             lower = name.lower()
-            if app["name"] == "YTMUltimate+":
+            if app["name"] == "MaxMusic":
                 if "ytmultimate+" not in lower or "no-ymp" in lower or "no_ymp" in lower: continue
                 if not re.search(r"\band\s+\d+\.\d+\.\d+\b", name, re.IGNORECASE): continue
             elif app["name"] == "YTKACE":
@@ -182,8 +182,8 @@ def get_latest_special_release(app):
 
 def build_from_github(app):
     try:
-        data = get_latest_special_release(app) if app.get("name") in {"YTMUltimate+", "YTKACE"} else None
-        if data is None and app.get("name") not in {"YTMUltimate+", "YTKACE"}:
+        data = get_latest_special_release(app) if app.get("name") in {"MaxMusic", "YTKACE"} else None
+        if data is None and app.get("name") not in {"MaxMusic", "YTKACE"}:
             response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases/latest", timeout=15)
             response.raise_for_status(); data = response.json()
         if not data: return None
