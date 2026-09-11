@@ -57,11 +57,11 @@
       ]
     },
     {
-      "name": "YTMUltimate+",
+      "name": "MaxMusic",
       "bundleIdentifier": "com.google.ios.youtubemusic",
       "developerName": "Mark02-2012",
       "subtitle": "Mark02-2012",
-      "localizedDescription": "YTMUltimate+ is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
+      "localizedDescription": "MaxMusic is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
       "iconURL": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png",
       "tintColor": "E8A8B7",
       "category": "entertainment",
