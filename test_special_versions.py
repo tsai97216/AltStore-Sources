@@ -52,5 +52,5 @@ def test_normalize_ytkace_version():
     assert updater.normalize_version("YTKACE", "YTKACE YouTube 21.34.3") == "21.34.3"
 
 
-def test_normalize_ytmultimate_version():
-    assert updater.normalize_version("YTMUltimate+", "YTMUltimate+ and 9.33.3") == "9.33.3"
+def test_normalize_maxmusic_version():
+    assert updater.normalize_version("MaxMusic", "YTMUltimate+ and 9.33.3") == "9.33.3"
