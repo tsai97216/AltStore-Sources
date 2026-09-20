@@ -40,7 +40,7 @@
       "name": "YTKACE",
       "bundleIdentifier": "com.google.ios.youtube",
       "developerName": "itzzace",
-      "subtitle": "itzzace（2026-09-12）",
+      "subtitle": "itzzace（2026-09-20）",
       "localizedDescription": "An open-source YouTube enhancement for iOS.",
       "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
       "tintColor": "E8A8B7",
@@ -48,11 +48,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "21.36.6",
-          "date": "2026-09-12",
-          "localizedDescription": "by @itzzace0\n\nWhat's new:\n• Updated for YouTube 21.36.6\n• Added a toggle to remove the Save button from Shorts\n\nFixed:\n• Fixed the feed lagging while scrolling with Remove Shorts, Products, Mixes or Community Posts on\n• Fixed the You tab moving to the end of the tab bar after changing other tabs\n• Fixed hold to speed staying stuck at the held speed after letting go\n• Fixed the Save button in Shorts overlapping the other buttons\n• Fixed Block Premium Prompts stopping community post images from op",
-          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v0.9.3/YTKACE_0.9.3_YouTube_21.36.6.ipa",
-          "size": 134780934
+          "version": "21.37.5",
+          "date": "2026-09-20",
+          "localizedDescription": "by @itzzace0\n\nWhat's new:\n• Updated to YouTube 21.37.5\n• Queue videos without Premium — play next, play last, reorder, shuffle, loop and clear\n• Playlist downloads — grab every video or pick the ones you want\n• YouTube's Download button can now open the YTKACE menu\n• Choose where the download button lives: player overlay, YouTube's button, or both\n• Save downloads to the share sheet, with separate video and audio destinations\n• Hide the products shelf\n• iOS 15 support for the tweak packages\n\nFix",
+          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v1.0.0/YTKACE_1.0.0_YouTube_21.37.5.ipa",
+          "size": 136694474
         }
       ]
     },
