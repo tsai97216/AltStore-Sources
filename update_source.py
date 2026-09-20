@@ -12,7 +12,7 @@ FILENAME = "apps.json"
 README_FILENAME = "README.md"
 YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Sources"
-SOURCE_URL = f"https://altstore.chi.qzz.io/{FILENAME}"
+SOURCE_URL = "https://altstore.chi.qzz.io"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/AltStore-Sources/main/source_icon.png"
 SOURCE_DESCRIPTION = "iOS IPA Source"
 
