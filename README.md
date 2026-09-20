@@ -7,7 +7,7 @@
 **Source 網址**
 
 ```text
-https://altstore.chi.qzz.io/apps.json
+https://altstore.chi.qzz.io
 ```
 
 ## App
