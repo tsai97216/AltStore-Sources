@@ -180,6 +180,14 @@ def get_latest_special_release(app):
         return None
 
 
+def format_subtitle(author, date):
+    return f"{author}（{date}）" if date else author
+
+
+def format_app_subtitle(author, version_date):
+    return format_subtitle(author, version_date)
+
+
 def build_from_github(app):
     try:
         data = get_latest_special_release(app) if app.get("name") in {"MaxMusic", "YTKACE"} else None
@@ -202,7 +210,7 @@ def build_from_github(app):
             version_name = normalize_version(app["name"], raw_version.lstrip("v"))
         download_url, size = ipa.get("browser_download_url"), ipa.get("size", 0)
         if not version_name or not download_url or not validate_download_url(download_url, size): return None
-        return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": app["subtitle"], "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10], "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
+        return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": format_app_subtitle(app["subtitle"], (data.get("published_at") or "")[:10]), "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10], "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
     except (requests.RequestException, ValueError):
         return None
 
@@ -212,7 +220,7 @@ def build_from_apptesters(app):
     name = app.get("name"); style = APP_STYLE.get(name, {"color": None, "subtitle": "AppTesters"})
     url, size = app.get("downloadURL"), app.get("size", 0)
     if not app.get("bundleIdentifier") or not url or not validate_download_url(url, size): return None
-    return {"name": name, "bundleIdentifier": app["bundleIdentifier"], "developerName": "AppTesters", "subtitle": style["subtitle"], "localizedDescription": app.get("localizedDescription", ""), "iconURL": app.get("iconURL") or app.get("icon"), "tintColor": style["color"], "category": "social" if name in {"Facebook", "Threads", "Instagram"} else "entertainment", "screenshots": [], "versions": [{"version": app.get("version", ""), "date": app.get("versionDate", ""), "localizedDescription": app.get("localizedDescription", ""), "downloadURL": url, "size": size}]}
+    return {"name": name, "bundleIdentifier": app["bundleIdentifier"], "developerName": "AppTesters", "subtitle": format_app_subtitle(style["subtitle"], app.get("versionDate", "")), "localizedDescription": app.get("localizedDescription", ""), "iconURL": app.get("iconURL") or app.get("icon"), "tintColor": style["color"], "category": "social" if name in {"Facebook", "Threads", "Instagram"} else "entertainment", "screenshots": [], "versions": [{"version": app.get("version", ""), "date": app.get("versionDate", ""), "localizedDescription": app.get("localizedDescription", ""), "downloadURL": url, "size": size}]}
 
 
 def find_previous_app(old_apps, bundle_id=None, name=None):
