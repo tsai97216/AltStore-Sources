@@ -1,10 +1,10 @@
 {
   "name": "Chi Sources",
   "identifier": "chi-source",
-  "sourceURL": "https://chi.qzz.io/AltStore-Sources/apps.json",
+  "sourceURL": "https://altstore.chi.qzz.io/apps.json",
   "subtitle": "Chi's IPA Source",
   "description": "iOS IPA Source",
-  "website": "https://chi.qzz.io",
+  "website": "https://altstore.chi.qzz.io",
   "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/source_icon.png",
   "featuredApps": [
     "com.bgg.piliplus",
