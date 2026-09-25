@@ -23,12 +23,12 @@ https://altstore.chi.qzz.io
 | **EeveeSpotify** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
-- **最近自動檢查：** 2026-09-25 08:21:29（台灣時間）
-- **最近內容更新：** 2026-09-22 06:59:29（台灣時間）
+- **最近自動檢查：** 2026-09-25 13:48:59（台灣時間）
+- **最近內容更新：** 2026-09-25 13:48:59（台灣時間）
 
 | App | 狀態 | 最新版本 | 版本日期 |
 | --- | --- | --- | --- |
-| PiliPlus | ⚪ Unchanged | 2.1.4 | 2026-09-13 |
+| PiliPlus | 🟢 Updated | 2.1.5 | 2026-09-25 |
 | YTKACE | ⚪ Unchanged | 21.38.2 | 2026-09-21 |
 | MaxMusic | ⚪ Unchanged | 9.34.4 | 2026-08-30 |
 | Facebook | ⚪ Unchanged | 570.0.0 | 2026-07-22 |
