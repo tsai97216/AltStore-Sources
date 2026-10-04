@@ -40,7 +40,7 @@
       "name": "YTKACE",
       "bundleIdentifier": "com.google.ios.youtube",
       "developerName": "itzzace",
-      "subtitle": "itzzace（2026-09-28）",
+      "subtitle": "itzzace（2026-10-04）",
       "localizedDescription": "An open-source YouTube enhancement for iOS.",
       "iconURL": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
       "tintColor": "E8A8B7",
@@ -48,11 +48,11 @@
       "screenshots": [],
       "versions": [
         {
-          "version": "21.39.4",
-          "date": "2026-09-28",
-          "localizedDescription": "by @itzzace0\n\nWhat's new:\n• Updated to YouTube 21.39.4\n• Liquid Glass on iOS 26 for the tab bar, top bar buttons, menus, sheets, player buttons and YTKACE popups\n• Liquid Glass settings page with a toggle for each part\n• Selected Tab Color for the tab text or the text and icon\n• Added HLS mode in Playback Fix\n• Added 5x speed in the speed menu\n• Improved native share sheet\n\nFixed:\n• Multiple scrubber dots on feed videos with a custom scrubber\n• Direct downloads using an outdated client\n\nYouTube ",
-          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v1.1.1/YTKACE_1.1.1_YouTube_21.39.4.ipa",
-          "size": 137241058
+          "version": "21.40.5",
+          "date": "2026-10-04",
+          "localizedDescription": "by @itzzace0\n\nWhat's new:\n• Updated to YouTube 21.40.5\n• Redesigned the download tab to look more like YouTube, with an All tab and your active downloads shown at the top\n• Smaller download popup that you can swipe away, and failed downloads stay so you can retry them\n• Playlist downloads now get the whole playlist, including private playlists and Liked videos\n• Liquid Glass tab bar is see-through while scrolling Shorts\n• Added Frosted Tab Bar option (Default, On, Off)\n• Added Normal Home Layout",
+          "downloadURL": "https://github.com/itzzace/ytkace/releases/download/v1.1.2/YTKACE_1.1.2_YouTube_21.40.5.ipa",
+          "size": 137298992
         }
       ]
     },
