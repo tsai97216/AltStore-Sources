@@ -173,9 +173,10 @@ def choose_highest_ytkace_ipa(releases):
     return release, asset
 
 
-def get_latest_special_release(app):
+def get_latest_special_release(app, releases=None):
     try:
-        releases = GITHUB_PROVIDER.releases(app["repo"], per_page=30)
+        if releases is None:
+            releases = GITHUB_PROVIDER.releases(app["repo"], per_page=30)
         candidates = []
         for release in releases if isinstance(releases, list) else []:
             if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"): continue
@@ -204,12 +205,12 @@ def format_app_subtitle(author, version_date):
 
 def build_from_github(app):
     try:
-        data = get_latest_special_release(app) if app.get("name") in {"MaxMusic", "YTKACE"} else None
-        if data is None and app.get("name") not in {"MaxMusic", "YTKACE"}:
-            data = GITHUB_PROVIDER.latest_release(app["repo"])
+        special = app.get("name") in {"MaxMusic", "YTKACE"}
+        releases = GITHUB_PROVIDER.releases(app["repo"], per_page=100) if special else None
+        data = get_latest_special_release(app, releases) if special else GITHUB_PROVIDER.latest_release(app["repo"])
         if not data: return None
         if app.get("name") == "YTKACE":
-            selected = choose_highest_ytkace_ipa(GITHUB_PROVIDER.releases(app["repo"], per_page=100))
+            selected = choose_highest_ytkace_ipa(releases or [])
             if not selected: return None
             data, ipa = selected
             version_match = re.search(r"(?:youtube|yt)[_\s-]*[vV]?[_\s-]*(\d+\.\d+\.\d+)", str(ipa.get("name", "")), re.IGNORECASE)
