@@ -70,12 +70,15 @@ GITHUB_APPS = [
 ]
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
-TARGET_APPS = ["Facebook", "Threads", "Instagram", "EeveeSpotify"]
+SIDeloadLABS_SOURCE_URL = "https://raw.githubusercontent.com/SideloadLabs/SideloasLabs-AltSource/main/apps.json"
+SIDELOADLABS_REPO_URL = "https://github.com/SideloadLabs/SideloasLabs-AltSource"
+TARGET_APPS = ["Facebook", "Threads", "Instagram"]
+SIDELOADLABS_APP = "EeveeSpotifyReincarnated(PATCHED)"
 APP_STYLE = {
     "Facebook": {"color": "78A5E3", "subtitle": "AppTesters"},
     "Threads": {"color": "858585", "subtitle": "AppTesters"},
     "Instagram": {"color": "DC8FA1", "subtitle": "AppTesters"},
-    "EeveeSpotify": {"color": "669878", "subtitle": "AppTesters"},
+    "EeveeSpotifyReincarnated(PATCHED)": {"color": "669878", "subtitle": "SideloadLabs"},
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
@@ -215,6 +218,31 @@ def build_from_github(app):
         return None
 
 
+def build_from_sideloadlabs(apps):
+    if not isinstance(apps, list): return None
+    match = next((app for app in apps if isinstance(app, dict) and app.get("name") == SIDELOADLABS_APP), None)
+    if not isinstance(match, dict): return None
+    url, size = match.get("downloadURL"), match.get("size", 0)
+    if not match.get("bundleIdentifier") or not url or not validate_download_url(url, size): return None
+    return {
+        "name": SIDELOADLABS_APP,
+        "bundleIdentifier": match["bundleIdentifier"],
+        "developerName": match.get("developerName", "SideloadLabs"),
+        "subtitle": format_app_subtitle("SideloadLabs", match.get("versionDate", "")),
+        "localizedDescription": match.get("localizedDescription", ""),
+        "iconURL": match.get("iconURL"),
+        "tintColor": "669878",
+        "category": "entertainment",
+        "screenshots": [],
+        "versions": [{
+            "version": match.get("version", ""),
+            "date": match.get("versionDate", ""),
+            "localizedDescription": match.get("versionDescription") or match.get("localizedDescription", ""),
+            "downloadURL": url,
+            "size": size,
+        }],
+    }
+
 def build_from_apptesters(app):
     if not isinstance(app, dict): return None
     name = app.get("name"); style = APP_STYLE.get(name, {"color": None, "subtitle": "AppTesters"})
@@ -241,6 +269,7 @@ def get_previous_content_update(readme):
 def get_app_meta(name):
     for app in GITHUB_APPS:
         if app["name"] == name: return app["author"], app["repo_url"]
+    if name == SIDELOADLABS_APP: return "SideloadLabs", SIDELOADLABS_REPO_URL
     return ("AppTesters", APPT_ESTERS_REPO_URL) if name in TARGET_APPS else ("Unknown", "")
 
 
@@ -280,6 +309,13 @@ def main():
             previous = find_previous_app({"apps": old_apps}, name=target)
             if previous: apps.append(previous)
             else: print(f"❌ {target}: update failed and no previous version available")
+    sideload_apps = fetch_json(SIDeloadLABS_SOURCE_URL)
+    built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
+    if built: apps.append(built)
+    else:
+        previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_APP)
+        if previous: apps.append(previous)
+        else: print(f"❌ {SIDELOADLABS_APP}: update failed and no previous version available")
     apps = keep_latest_only(apps)
     checked_at = now_taiwan()
     previous_content_update = get_previous_content_update(Path(README_FILENAME).read_text(encoding="utf-8")) if Path(README_FILENAME).exists() else "尚未更新"
