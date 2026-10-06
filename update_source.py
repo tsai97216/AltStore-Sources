@@ -52,8 +52,11 @@ def validate_download_url(url, expected_size=0):
             response = SESSION.get(url, headers={"Range": "bytes=0-0"}, allow_redirects=True, timeout=15, stream=True)
         ok = response.status_code in (200, 206)
         content_length = response.headers.get("Content-Length")
-        if ok and content_length:
-            ok = int(content_length) > 0 and (not expected_size or int(content_length) == int(expected_size))
+        if ok:
+            if not content_length:
+                ok = False
+            else:
+                ok = int(content_length) > 0 and (not expected_size or int(content_length) == int(expected_size))
         response.close()
         return ok
     except (requests.RequestException, ValueError):
@@ -183,7 +186,7 @@ def get_latest_special_release(app, releases=None):
             name = str(release.get("name") or "")
             lower = name.lower()
             if app["name"] == "MaxMusic":
-                if "ytmultimate+" not in lower or "no-ymp" in lower or "no_ymp" in lower: continue
+                if not any(marker in lower for marker in ("ytmultimate+", "ytmusicultimate+")) or "no-ymp" in lower or "no_ymp" in lower: continue
                 if not re.search(r"\band\s+\d+\.\d+\.\d+\b", name, re.IGNORECASE): continue
             elif app["name"] == "YTKACE":
                 if "ytkace" not in lower: continue
