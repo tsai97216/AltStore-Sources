@@ -74,11 +74,12 @@ SIDeloadLABS_SOURCE_URL = "https://raw.githubusercontent.com/SideloadLabs/Sidelo
 SIDELOADLABS_REPO_URL = "https://github.com/SideloadLabs/SideloasLabs-AltSource"
 TARGET_APPS = ["Facebook", "Threads", "Instagram"]
 SIDELOADLABS_APP = "EeveeSpotifyReincarnated(PATCHED)"
+SIDELOADLABS_DISPLAY_NAME = "EeveeSpotify (PATCHED)"
 APP_STYLE = {
     "Facebook": {"color": "78A5E3", "subtitle": "AppTesters"},
     "Threads": {"color": "858585", "subtitle": "AppTesters"},
     "Instagram": {"color": "DC8FA1", "subtitle": "AppTesters"},
-    "EeveeSpotifyReincarnated(PATCHED)": {"color": "669878", "subtitle": "SideloadLabs"},
+    "EeveeSpotify (PATCHED)": {"color": "669878", "subtitle": "SideloadLabs"},
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
@@ -225,7 +226,7 @@ def build_from_sideloadlabs(apps):
     url, size = match.get("downloadURL"), match.get("size", 0)
     if not match.get("bundleIdentifier") or not url or not validate_download_url(url, size): return None
     return {
-        "name": SIDELOADLABS_APP,
+        "name": SIDELOADLABS_DISPLAY_NAME,
         "bundleIdentifier": match["bundleIdentifier"],
         "developerName": match.get("developerName", "SideloadLabs"),
         "subtitle": format_app_subtitle("SideloadLabs", match.get("versionDate", "")),
@@ -269,7 +270,7 @@ def get_previous_content_update(readme):
 def get_app_meta(name):
     for app in GITHUB_APPS:
         if app["name"] == name: return app["author"], app["repo_url"]
-    if name == SIDELOADLABS_APP: return "SideloadLabs", SIDELOADLABS_REPO_URL
+    if name == SIDELOADLABS_DISPLAY_NAME: return "SideloadLabs", SIDELOADLABS_REPO_URL
     return ("AppTesters", APPT_ESTERS_REPO_URL) if name in TARGET_APPS else ("Unknown", "")
 
 
@@ -313,9 +314,9 @@ def main():
     built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
     if built: apps.append(built)
     else:
-        previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_APP)
+        previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_DISPLAY_NAME)
         if previous: apps.append(previous)
-        else: print(f"❌ {SIDELOADLABS_APP}: update failed and no previous version available")
+        else: print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
     apps = keep_latest_only(apps)
     checked_at = now_taiwan()
     previous_content_update = get_previous_content_update(Path(README_FILENAME).read_text(encoding="utf-8")) if Path(README_FILENAME).exists() else "尚未更新"
