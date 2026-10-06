@@ -71,3 +71,30 @@ def test_validate_download_url_size_mismatch(monkeypatch):
 
     monkeypatch.setattr(updater.SESSION, "head", lambda *args, **kwargs: Response())
     assert updater.validate_download_url("https://example.com/app.ipa", 1234) is False
+def test_is_updated_within_day():
+    checked = "2026-10-06 12:00:00"
+    assert updater.is_updated_within_day("2026-10-06 00:00:00", checked) is True
+    assert updater.is_updated_within_day("2026-10-05 11:59:59", checked) is False
+    assert updater.is_updated_within_day("2026-10-06 12:00:01", checked) is False
+    assert updater.is_updated_within_day("not-a-date", checked) is False
+
+
+def test_get_status_updated_at():
+    readme = """
+<!-- AUTO-UPDATE-STATUS-TIMES:START -->
+<!-- {"PiliPlus": "2026-10-06 01:00:00", "YTKACE": "2026-10-05 02:00:00"} -->
+<!-- AUTO-UPDATE-STATUS-TIMES:END -->
+"""
+    assert updater.get_status_updated_at(readme) == {
+        "PiliPlus": "2026-10-06 01:00:00",
+        "YTKACE": "2026-10-05 02:00:00",
+    }
+
+
+def test_get_status_updated_at_invalid_block():
+    readme = """
+<!-- AUTO-UPDATE-STATUS-TIMES:START -->
+<!-- not-json -->
+<!-- AUTO-UPDATE-STATUS-TIMES:END -->
+"""
+    assert updater.get_status_updated_at(readme) == {}
