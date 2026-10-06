@@ -220,3 +220,66 @@ def test_all_update_keeps_previous_app_when_one_source_fails(monkeypatch):
     monkeypatch.setattr(updater.JSON_PROVIDER, "fetch", lambda url: None)
     result = updater.update_source_apps({}, old_apps)
     assert result[0] == old_apps[0]
+
+def test_choose_ipa_asset_accepts_uppercase_extension():
+    assets = [
+        {"name": "YTKACE.IPA", "created_at": "2026-08-29T10:00:00Z"},
+    ]
+    assert updater.choose_ipa_asset(assets, {"asset_keywords": ["ytkace"]})["name"] == "YTKACE.IPA"
+
+
+def test_normalize_version_for_maxmusic():
+    assert updater.normalize_version("MaxMusic", "YTMusicUltimate+ and 9.34.4") == "9.34.4"
+
+
+def test_normalize_version_for_ytkace():
+    assert updater.normalize_version("YTKACE", "YouTube v21.40.5") == "21.40.5"
+
+
+def test_keep_latest_only_handles_v_prefix_versions():
+    apps = [
+        {"name": "Example", "bundleIdentifier": "com.example.app", "version": "v1.9.0"},
+        {"name": "Example", "bundleIdentifier": "com.example.app", "version": "v1.10.0"},
+    ]
+    result = updater.keep_latest_only(apps)
+    assert result[0]["version"] == "v1.10.0"
+
+
+def test_validate_download_url_rejects_missing_content_length(monkeypatch):
+    class Response:
+        status_code = 200
+        headers = {}
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(updater.SESSION, "head", lambda *args, **kwargs: Response())
+    assert updater.validate_download_url("https://example.com/app.ipa") is False
+
+
+def test_validate_download_url_range_fallback(monkeypatch):
+    class Response:
+        def __init__(self, status_code, headers):
+            self.status_code = status_code
+            self.headers = headers
+
+        def close(self):
+            pass
+
+    calls = []
+
+    def fake_head(*args, **kwargs):
+        calls.append("head")
+        return Response(405, {})
+
+    def fake_get(*args, **kwargs):
+        calls.append("get")
+        assert kwargs["headers"] == {"Range": "bytes=0-0"}
+        assert kwargs["stream"] is True
+        return Response(206, {"Content-Length": "1"})
+
+    monkeypatch.setattr(updater.SESSION, "head", fake_head)
+    monkeypatch.setattr(updater.SESSION, "get", fake_get)
+    assert updater.validate_download_url("https://example.com/app.ipa") is True
+    assert calls == ["head", "get"]
+
