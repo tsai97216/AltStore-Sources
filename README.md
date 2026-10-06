@@ -23,7 +23,7 @@ https://altstore.chi.qzz.io
 | **EeveeSpotify Reincarnated** | [SideloadLabs](https://github.com/SideloadLabs/SideloasLabs-AltSource) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
-- **最近自動檢查：** 2026-10-06 23:15:27（台灣時間）
+- **最近自動檢查：** 2026-10-07 01:56:24（台灣時間）
 - **最近內容更新：** 2026-10-06 01:53:19（台灣時間）
 
 | App | 狀態 | 最新版本 | 版本日期 |
@@ -34,12 +34,12 @@ https://altstore.chi.qzz.io
 | Facebook | ⚪ Unchanged | 570.0.0 | 2026-07-22 |
 | Threads | ⚪ Unchanged | 437.0.0 | 2026-07-07 |
 | Instagram | ⚪ Unchanged | 433.0.0 | 2026-06-10 |
-| EeveeSpotify Reincarnated | 🟢 Updated | 9.1.88 | 2026-10-05 |
+| EeveeSpotify Reincarnated | ⚪ Unchanged | 9.1.88 | 2026-10-05 |
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
 <!-- AUTO-UPDATE-STATUS-TIMES:START -->
-<!-- {"EeveeSpotify Reincarnated": "2026-10-06 01:53:19"} -->
+<!-- {} -->
 <!-- AUTO-UPDATE-STATUS-TIMES:END -->
 
 ## 說明
