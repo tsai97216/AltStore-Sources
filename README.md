@@ -38,6 +38,10 @@ https://altstore.chi.qzz.io
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
+<!-- AUTO-UPDATE-STATUS-TIMES:START -->
+<!-- {"EeveeSpotify Reincarnated": "2026-10-06 01:53:19"} -->
+<!-- AUTO-UPDATE-STATUS-TIMES:END -->
+
 ## 說明
 
 本 Source 僅負責整理與自動更新各 App 的 IPA 資訊，App 與其內容均由原作者及來源專案維護。
