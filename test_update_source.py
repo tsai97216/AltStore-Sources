@@ -166,3 +166,57 @@ def test_update_source_apps_single_unknown_app():
         assert "Unknown app or update failed" in str(exc)
     else:
         raise AssertionError("expected ValueError")
+
+
+def test_github_failure_falls_back_to_previous(monkeypatch):
+    old_apps = [
+        {
+            "name": "PiliPlus",
+            "bundleIdentifier": "com.bgg.piliplus",
+            "versions": [{"version": "2.1.6"}],
+        }
+    ]
+    monkeypatch.setattr(updater, "build_from_github", lambda config: None)
+    result = updater.update_source_apps({}, old_apps, "PiliPlus")
+    assert result == old_apps
+
+
+def test_apptesters_failure_falls_back_to_previous(monkeypatch):
+    old_apps = [
+        {
+            "name": "Facebook",
+            "bundleIdentifier": "com.facebook.Facebook",
+            "versions": [{"version": "570.0.0"}],
+        }
+    ]
+    monkeypatch.setattr(updater, "fetch_remote", lambda: None)
+    result = updater.update_source_apps({}, old_apps, "Facebook")
+    assert result == old_apps
+
+
+def test_sideloadlabs_failure_falls_back_to_previous(monkeypatch):
+    old_apps = [
+        {
+            "name": "EeveeSpotify Reincarnated",
+            "bundleIdentifier": "com.spotify.client.patched",
+            "versions": [{"version": "9.1.88"}],
+        }
+    ]
+    monkeypatch.setattr(updater.JSON_PROVIDER, "fetch", lambda url: None)
+    result = updater.update_source_apps({}, old_apps, "EeveeSpotify Reincarnated")
+    assert result == old_apps
+
+
+def test_all_update_keeps_previous_app_when_one_source_fails(monkeypatch):
+    old_apps = [
+        {
+            "name": "PiliPlus",
+            "bundleIdentifier": "com.bgg.piliplus",
+            "versions": [{"version": "2.1.6"}],
+        }
+    ]
+    monkeypatch.setattr(updater, "build_from_github", lambda config: None)
+    monkeypatch.setattr(updater, "fetch_remote", lambda: None)
+    monkeypatch.setattr(updater.JSON_PROVIDER, "fetch", lambda url: None)
+    result = updater.update_source_apps({}, old_apps)
+    assert result[0] == old_apps[0]
