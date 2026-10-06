@@ -13,7 +13,7 @@
     "com.facebook.Facebook",
     "com.burbn.barcelona",
     "com.burbn.instagram",
-    "com.spotify.client"
+    "com.spotify.client.patched"
   ],
   "apps": [
     {
@@ -137,22 +137,22 @@
       ]
     },
     {
-      "name": "EeveeSpotify",
-      "bundleIdentifier": "com.spotify.client",
-      "developerName": "AppTesters",
-      "subtitle": "AppTesters（2026-06-16）",
-      "localizedDescription": "Injected with Premium",
-      "iconURL": "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/icons/com.spotify.client.png",
+      "name": "EeveeSpotifyReincarnated(PATCHED)",
+      "bundleIdentifier": "com.spotify.client.patched",
+      "developerName": "SideloadLabs",
+      "subtitle": "SideloadLabs（2026-10-05）",
+      "localizedDescription": "Spotify Version: v9.1.88, EeveeSpotify Version: 7.0.0. Patched version, use this only if you're using paid cert, jailbroken, or trollstore",
+      "iconURL": "https://files.catbox.moe/9fgova.JPG",
       "tintColor": "669878",
       "category": "entertainment",
       "screenshots": [],
       "versions": [
         {
-          "version": "9.1.56",
-          "date": "2026-06-16",
-          "localizedDescription": "Injected with Premium",
-          "downloadURL": "https://github.com/apptesters-org/AppTesters_Repo/releases/download/16-06-2026/EeveeSpotify_9.1.56_Premium_%40thisismanpreets_apptesters.org.ipa",
-          "size": 118396730
+          "version": "9.1.88",
+          "date": "2026-10-05",
+          "localizedDescription": "Updated to Spotify v9.1.88, Full release notes on github",
+          "downloadURL": "https://files.catbox.moe/ogibmn.ipa",
+          "size": 13000000
         }
       ]
     }
