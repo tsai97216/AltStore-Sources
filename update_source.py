@@ -63,11 +63,17 @@ def ensure_list(data, key=None):
         return value if isinstance(value, list) else []
     return []
 
-GITHUB_APPS = [
-    {"repo": "bggRGjQaUbCoE/PiliPlus", "name": "PiliPlus", "bundleID": "com.bgg.piliplus", "author": "bggRGjQaUbCoE", "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png", "subtitle": "bggRGjQaUbCoE", "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。", "color": "B8D2C1", "category": "entertainment", "asset_keywords": ["piliplus"]},
-    {"repo": "itzzace/ytkace", "name": "YTKACE", "bundleID": "com.google.ios.youtube", "author": "itzzace", "repo_url": "https://github.com/itzzace/ytkace", "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png", "subtitle": "itzzace", "desc": "An open-source YouTube enhancement for iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["ytkace"]},
-    {"repo": "Mark02-2012/YTMUltimatePLUS", "name": "MaxMusic", "bundleID": "com.google.ios.youtubemusic", "author": "Mark02-2012", "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS", "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png", "subtitle": "Mark02-2012", "desc": "MaxMusic is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.", "color": "E8A8B7", "category": "entertainment", "asset_keywords": ["maxmusic", "ytmultimate", "ytmusicultimate", "youtubemusic"]},
-]
+APP_CONFIG_FILENAME = "app_config.json"
+
+def load_app_config():
+    path = Path(APP_CONFIG_FILENAME)
+    data = json.loads(path.read_text(encoding="utf-8"))
+    apps = data.get("apps") if isinstance(data, dict) else None
+    if not isinstance(apps, list) or not all(isinstance(app, dict) for app in apps):
+        raise ValueError(f"{APP_CONFIG_FILENAME}: apps must be a list of objects")
+    return apps
+
+GITHUB_APPS = load_app_config()
 SOURCE_DATA_URL = "https://raw.githubusercontent.com/apptesters-org/AppTesters_Repo/main/apps.json"
 APPT_ESTERS_REPO_URL = "https://github.com/apptesters-org/AppTesters_Repo"
 SIDeloadLABS_SOURCE_URL = "https://raw.githubusercontent.com/SideloadLabs/SideloasLabs-AltSource/main/apps.json"
