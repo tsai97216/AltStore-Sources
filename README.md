@@ -20,7 +20,7 @@ https://altstore.chi.qzz.io
 | **Facebook** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 | **Threads** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
 | **Instagram** | [AppTesters](https://github.com/apptesters-org/AppTesters_Repo) |
-| **EeveeSpotify (PATCHED)** | [SideloadLabs](https://github.com/SideloadLabs/SideloasLabs-AltSource) |
+| **EeveeSpotify Reincarnated** | [SideloadLabs](https://github.com/SideloadLabs/SideloasLabs-AltSource) |
 <!-- AUTO-UPDATE-STATUS:START -->
 ## 更新狀態
 - **最近自動檢查：** 2026-10-06 07:44:40（台灣時間）
@@ -34,7 +34,7 @@ https://altstore.chi.qzz.io
 | Facebook | ⚪ Unchanged | 570.0.0 | 2026-07-22 |
 | Threads | ⚪ Unchanged | 437.0.0 | 2026-07-07 |
 | Instagram | ⚪ Unchanged | 433.0.0 | 2026-06-10 |
-| EeveeSpotify (PATCHED) | 🟢 Updated | 9.1.88 | 2026-10-05 |
+| EeveeSpotify Reincarnated | 🟢 Updated | 9.1.88 | 2026-10-05 |
 
 <!-- AUTO-UPDATE-STATUS:END -->
 
