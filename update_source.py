@@ -1,3 +1,4 @@
+import argparse
 import json
 import re
 from datetime import datetime
@@ -326,34 +327,112 @@ def update_readme(apps, checked_at, content_updated_at, statuses, status_times):
     path.write_text(readme, encoding="utf-8")
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Update Chi Sources")
+    parser.add_argument(
+        "--app",
+        help="Only update the specified app. Omit to update all apps.",
+    )
+    return parser.parse_args()
+
+
+def build_single_app(target_name, old_apps):
+    config = next((app for app in GITHUB_APPS if app.get("name") == target_name), None)
+    if config:
+        built = build_from_github(config)
+        if built:
+            return built
+        return find_previous_app({"apps": old_apps}, bundle_id=config["bundleID"])
+
+    if target_name in TARGET_APPS:
+        remote_apps = fetch_remote()
+        match = next(
+            (app for app in remote_apps or []
+             if isinstance(app, dict) and app.get("name") == target_name),
+            None,
+        )
+        built = build_from_apptesters(match) if match else None
+        return built or find_previous_app({"apps": old_apps}, name=target_name)
+
+    if target_name == SIDELOADLABS_DISPLAY_NAME:
+        sideload_apps = JSON_PROVIDER.fetch(SIDeloadLABS_SOURCE_URL)
+        built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
+        return built or find_previous_app({"apps": old_apps}, name=target_name)
+
+    return None
+
+
+def update_source_apps(old_source, old_apps, target_name=None):
+    if not target_name:
+        apps = []
+        for config in GITHUB_APPS:
+            built = build_from_github(config)
+            if built:
+                apps.append(built)
+            else:
+                previous = find_previous_app({"apps": old_apps}, bundle_id=config["bundleID"])
+                if previous:
+                    apps.append(previous)
+                else:
+                    print(f"❌ {config['name']}: update failed and no previous version available")
+
+        remote_apps = fetch_remote()
+        for target in TARGET_APPS:
+            match = next(
+                (app for app in remote_apps or []
+                 if isinstance(app, dict) and app.get("name") == target),
+                None,
+            )
+            built = build_from_apptesters(match) if match else None
+            if built:
+                apps.append(built)
+            else:
+                previous = find_previous_app({"apps": old_apps}, name=target)
+                if previous:
+                    apps.append(previous)
+                else:
+                    print(f"❌ {target}: update failed and no previous version available")
+
+        sideload_apps = JSON_PROVIDER.fetch(SIDeloadLABS_SOURCE_URL)
+        built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
+        if built:
+            apps.append(built)
+        else:
+            previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_DISPLAY_NAME)
+            if previous:
+                apps.append(previous)
+            else:
+                print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
+        return keep_latest_only(apps)
+
+    if target_name == "all":
+        return update_source_apps(old_source, old_apps)
+
+    updated = build_single_app(target_name, old_apps)
+    if not updated:
+        raise ValueError(f"Unknown app or update failed: {target_name}")
+
+    target_bundle = updated.get("bundleIdentifier")
+    target_index = next(
+        (i for i, app in enumerate(old_apps)
+         if isinstance(app, dict)
+         and ((target_bundle and app.get("bundleIdentifier") == target_bundle)
+              or app.get("name") == target_name)),
+        None,
+    )
+    apps = list(old_apps)
+    if target_index is None:
+        apps.append(updated)
+    else:
+        apps[target_index] = updated
+    return keep_latest_only(apps)
+
+
 def main():
+    args = parse_args()
     old_source = json.loads(Path(FILENAME).read_text(encoding="utf-8")) if Path(FILENAME).exists() else {}
     old_apps = old_source.get("apps", []) if isinstance(old_source, dict) else []
-    apps = []
-    for config in GITHUB_APPS:
-        built = build_from_github(config)
-        if built: apps.append(built)
-        else:
-            previous = find_previous_app({"apps": old_apps}, bundle_id=config["bundleID"])
-            if previous: apps.append(previous)
-            else: print(f"❌ {config['name']}: update failed and no previous version available")
-    remote_apps = fetch_remote()
-    for target in TARGET_APPS:
-        match = next((app for app in remote_apps or [] if isinstance(app, dict) and app.get("name") == target), None)
-        built = build_from_apptesters(match) if match else None
-        if built: apps.append(built)
-        else:
-            previous = find_previous_app({"apps": old_apps}, name=target)
-            if previous: apps.append(previous)
-            else: print(f"❌ {target}: update failed and no previous version available")
-    sideload_apps = JSON_PROVIDER.fetch(SIDeloadLABS_SOURCE_URL)
-    built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
-    if built: apps.append(built)
-    else:
-        previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_DISPLAY_NAME)
-        if previous: apps.append(previous)
-        else: print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
-    apps = keep_latest_only(apps)
+    apps = update_source_apps(old_source, old_apps, args.app)
     checked_at = now_taiwan()
     current_readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
     previous_content_update = get_previous_content_update(current_readme) if current_readme else "尚未更新"
