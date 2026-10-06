@@ -1,0 +1,52 @@
+{
+  "apps": [
+    {
+      "repo": "bggRGjQaUbCoE/PiliPlus",
+      "name": "PiliPlus",
+      "bundleID": "com.bgg.piliplus",
+      "author": "bggRGjQaUbCoE",
+      "repo_url": "https://github.com/bggRGjQaUbCoE/PiliPlus",
+      "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/piliplus.png",
+      "subtitle": "bggRGjQaUbCoE",
+      "desc": "第三方 Bilibili 客戶端，提供增強播放與其他功能。",
+      "color": "B8D2C1",
+      "category": "entertainment",
+      "asset_keywords": [
+        "piliplus"
+      ]
+    },
+    {
+      "repo": "itzzace/ytkace",
+      "name": "YTKACE",
+      "bundleID": "com.google.ios.youtube",
+      "author": "itzzace",
+      "repo_url": "https://github.com/itzzace/ytkace",
+      "icon": "https://raw.githubusercontent.com/tsai97216/AltStore-Sources/main/YT.png",
+      "subtitle": "itzzace",
+      "desc": "An open-source YouTube enhancement for iOS.",
+      "color": "E8A8B7",
+      "category": "entertainment",
+      "asset_keywords": [
+        "ytkace"
+      ]
+    },
+    {
+      "repo": "Mark02-2012/YTMUltimatePLUS",
+      "name": "MaxMusic",
+      "bundleID": "com.google.ios.youtubemusic",
+      "author": "Mark02-2012",
+      "repo_url": "https://github.com/Mark02-2012/YTMUltimatePLUS",
+      "icon": "https://raw.githubusercontent.com/Mark02-2012/YTMUltimatePLUS/MYmain/Resources/IMG_5914.png",
+      "subtitle": "Mark02-2012",
+      "desc": "MaxMusic is a fork of YTMusicUltimate with additional tweaks for YouTube Music on iOS.",
+      "color": "E8A8B7",
+      "category": "entertainment",
+      "asset_keywords": [
+        "maxmusic",
+        "ytmultimate",
+        "ytmusicultimate",
+        "youtubemusic"
+      ]
+    }
+  ]
+}
