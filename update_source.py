@@ -83,6 +83,8 @@ APP_STYLE = {
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
+STATUS_TIMES_START = "<!-- AUTO-UPDATE-STATUS-TIMES:START -->"
+STATUS_TIMES_END = "<!-- AUTO-UPDATE-STATUS-TIMES:END -->"
 
 
 def fetch_remote():
@@ -267,6 +269,27 @@ def get_previous_content_update(readme):
     return match.group(1) if match else "尚未更新"
 
 
+def get_status_updated_at(readme):
+    match = re.search(re.escape(STATUS_TIMES_START) + r"\s*<!--\s*(\{.*?\})\s*-->\s*" + re.escape(STATUS_TIMES_END), readme, flags=re.DOTALL)
+    if not match:
+        return {}
+    try:
+        data = json.loads(match.group(1))
+        return data if isinstance(data, dict) else {}
+    except json.JSONDecodeError:
+        return {}
+
+
+def is_updated_within_day(updated_at, checked_at):
+    try:
+        updated = datetime.strptime(updated_at, "%Y-%m-%d %H:%M:%S")
+        checked = datetime.strptime(checked_at, "%Y-%m-%d %H:%M:%S")
+        elapsed = (checked - updated).total_seconds()
+        return 0 <= elapsed < 86400
+    except (TypeError, ValueError):
+        return False
+
+
 def get_app_meta(name):
     for app in GITHUB_APPS:
         if app["name"] == name: return app["author"], app["repo_url"]
@@ -274,7 +297,7 @@ def get_app_meta(name):
     return ("AppTesters", APPT_ESTERS_REPO_URL) if name in TARGET_APPS else ("Unknown", "")
 
 
-def update_readme(apps, checked_at, content_updated_at, statuses):
+def update_readme(apps, checked_at, content_updated_at, statuses, status_times):
     path = Path(README_FILENAME); readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
     rows = ["| App | 原作者 |", "| --- | --- |"]
     for app in apps:
@@ -283,10 +306,19 @@ def update_readme(apps, checked_at, content_updated_at, statuses):
     for app in apps:
         latest = (app.get("versions") or [{}])[0]; status_rows.append(f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
     status = "\n".join([STATUS_START, "## 更新狀態", f"- **最近自動檢查：** {checked_at}（台灣時間）", f"- **最近內容更新：** {content_updated_at}（台灣時間）", "", *status_rows, "", STATUS_END])
+    status_times_block = "\n".join([
+        STATUS_TIMES_START,
+        f"<!-- {json.dumps(status_times, ensure_ascii=False, sort_keys=True)} -->",
+        STATUS_TIMES_END,
+    ])
     if STATUS_START in readme and STATUS_END in readme:
         readme = re.sub(re.escape(STATUS_START) + r".*?" + re.escape(STATUS_END), status, readme, flags=re.DOTALL)
     else:
         readme = readme.rstrip() + "\n\n" + status + "\n"
+    if STATUS_TIMES_START in readme and STATUS_TIMES_END in readme:
+        readme = re.sub(re.escape(STATUS_TIMES_START) + r".*?" + re.escape(STATUS_TIMES_END), status_times_block, readme, flags=re.DOTALL)
+    else:
+        readme = readme.rstrip() + "\n" + status_times_block + "\n"
     path.write_text(readme, encoding="utf-8")
 
 
@@ -319,18 +351,31 @@ def main():
         else: print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
     apps = keep_latest_only(apps)
     checked_at = now_taiwan()
-    previous_content_update = get_previous_content_update(Path(README_FILENAME).read_text(encoding="utf-8")) if Path(README_FILENAME).exists() else "尚未更新"
+    current_readme = Path(README_FILENAME).read_text(encoding="utf-8") if Path(README_FILENAME).exists() else ""
+    previous_content_update = get_previous_content_update(current_readme) if current_readme else "尚未更新"
+    previous_status_times = get_status_updated_at(current_readme)
     content_changed = json.dumps(apps, ensure_ascii=False, sort_keys=True) != json.dumps(old_apps, ensure_ascii=False, sort_keys=True)
     content_updated_at = checked_at if content_changed else previous_content_update
     source = dict(old_source) if isinstance(old_source, dict) else {}
     source.update({"name": DISPLAY_NAME, "identifier": "chi-source", "sourceURL": SOURCE_URL, "subtitle": "Chi's IPA Source", "description": SOURCE_DESCRIPTION, "website": "https://altstore.chi.qzz.io", "iconURL": SOURCE_ICON_URL, "featuredApps": [app["bundleIdentifier"] for app in apps], "apps": apps, "news": source.get("news", [])})
     Path(FILENAME).write_text(json.dumps(source, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     statuses = {}
+    status_times = {}
     old_by_name = {app.get("name"): app for app in old_apps if isinstance(app, dict)}
     for app in apps:
-        old = old_by_name.get(app.get("name")); new_ver = get_version(app); old_ver = get_version(old) if old else None
-        statuses[app.get("name")] = "🟢 Updated" if old_ver != new_ver else "⚪ Unchanged"
-    update_readme(apps, checked_at, content_updated_at, statuses)
+        name = app.get("name")
+        old = old_by_name.get(name)
+        new_ver = get_version(app)
+        old_ver = get_version(old) if old else None
+        if old_ver != new_ver:
+            statuses[name] = "🟢 Updated"
+            status_times[name] = checked_at
+        elif previous_status_times.get(name) and is_updated_within_day(previous_status_times[name], checked_at):
+            statuses[name] = "🟢 Updated"
+            status_times[name] = previous_status_times[name]
+        else:
+            statuses[name] = "⚪ Unchanged"
+    update_readme(apps, checked_at, content_updated_at, statuses, status_times)
 
 
 if __name__ == "__main__":
