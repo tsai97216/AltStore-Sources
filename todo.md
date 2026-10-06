@@ -9,13 +9,13 @@
 
 ## 可靠性
 - [x] 補齊 update_source.py 的狀態判定測試
-- [ ] 檢查並強化 AltStore Source schema 驗證
+- [x] 檢查並強化 AltStore Source schema 驗證
 - [x] 檢查各來源失敗時的 fallback 行為
 - [ ] 檢查版本、IPA asset 與檔案大小判定的邊界情況
 
 ## CI / 維護
-- [ ] 檢查 GitHub Actions 的更新流程與提交條件
-- [ ] 確認自動更新不會因單一 App 失敗而破壞整個 Source
+- [x] 檢查 GitHub Actions 的更新流程與提交條件
+- [x] 確認自動更新不會因單一 App 失敗而破壞整個 Source
 - [ ] 評估更新頻率、API 使用量與不必要的請求
 
 ## README / Source
