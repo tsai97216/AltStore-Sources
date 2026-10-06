@@ -10,7 +10,7 @@
 ## 可靠性
 - [x] 補齊 update_source.py 的狀態判定測試
 - [ ] 檢查並強化 AltStore Source schema 驗證
-- [ ] 檢查各來源失敗時的 fallback 行為
+- [x] 檢查各來源失敗時的 fallback 行為
 - [ ] 檢查版本、IPA asset 與檔案大小判定的邊界情況
 
 ## CI / 維護
