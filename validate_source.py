@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from update_source import GITHUB_APPS, TARGET_APPS
 
 FILENAME = "apps.json"
-EXPECTED_APPS = {app["name"] for app in GITHUB_APPS} | set(TARGET_APPS)
+EXPECTED_APPS = {app["name"] for app in GITHUB_APPS} | set(TARGET_APPS) | {"EeveeSpotifyReincarnated(PATCHED)"}
 REQUIRED_APP_FIELDS = {
     "name",
     "bundleIdentifier",
