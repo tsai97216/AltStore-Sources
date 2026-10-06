@@ -283,3 +283,23 @@ def test_validate_download_url_range_fallback(monkeypatch):
     assert updater.validate_download_url("https://example.com/app.ipa") is True
     assert calls == ["head", "get"]
 
+def test_get_latest_special_release_uses_supplied_releases(monkeypatch):
+    releases = [
+        {
+            "name": "YTMusicUltimate+ and 9.34.4",
+            "tag_name": "v9.34.4",
+            "published_at": "2026-08-30T00:00:00Z",
+            "assets": [],
+        }
+    ]
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("GitHub API should not be called when releases are supplied")
+
+    monkeypatch.setattr(updater.GITHUB_PROVIDER, "releases", fail_if_called)
+    result = updater.get_latest_special_release(
+        {"name": "MaxMusic", "repo": "Mark02-2012/YTMUltimatePLUS"},
+        releases,
+    )
+    assert result == releases[0]
+
