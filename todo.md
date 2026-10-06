@@ -2,13 +2,13 @@
 
 ## 架構融合
 - [ ] 研究 AltGallery / AltGen 的設定檔、Provider、版本解析與 merge 機制
-- [ ] 將 App 定義逐步從 update_source.py 抽離成獨立設定
+- [x] 將 App 定義逐步從 update_source.py 抽離成獨立設定
 - [ ] 抽象 GitHub、AltSource、AppTesters 等來源 Provider
 - [ ] 保留現有的特殊 App 解析、IPA 驗證、Retry 與舊版本 fallback
 - [ ] 加入單一 App 更新能力，避免每次都完整重跑
 
 ## 可靠性
-- [ ] 補齊 update_source.py 的狀態判定測試
+- [x] 補齊 update_source.py 的狀態判定測試
 - [ ] 檢查並強化 AltStore Source schema 驗證
 - [ ] 檢查各來源失敗時的 fallback 行為
 - [ ] 檢查版本、IPA asset 與檔案大小判定的邊界情況
