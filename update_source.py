@@ -74,12 +74,12 @@ SIDeloadLABS_SOURCE_URL = "https://raw.githubusercontent.com/SideloadLabs/Sidelo
 SIDELOADLABS_REPO_URL = "https://github.com/SideloadLabs/SideloasLabs-AltSource"
 TARGET_APPS = ["Facebook", "Threads", "Instagram"]
 SIDELOADLABS_APP = "EeveeSpotifyReincarnated(PATCHED)"
-SIDELOADLABS_DISPLAY_NAME = "EeveeSpotify (PATCHED)"
+SIDELOADLABS_DISPLAY_NAME = "EeveeSpotify Reincarnated"
 APP_STYLE = {
     "Facebook": {"color": "78A5E3", "subtitle": "AppTesters"},
     "Threads": {"color": "858585", "subtitle": "AppTesters"},
     "Instagram": {"color": "DC8FA1", "subtitle": "AppTesters"},
-    "EeveeSpotify (PATCHED)": {"color": "669878", "subtitle": "SideloadLabs"},
+    "EeveeSpotify Reincarnated": {"color": "669878", "subtitle": "SideloadLabs"},
 }
 STATUS_START = "<!-- AUTO-UPDATE-STATUS:START -->"
 STATUS_END = "<!-- AUTO-UPDATE-STATUS:END -->"
