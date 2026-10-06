@@ -106,3 +106,21 @@ def test_app_config_contains_expected_github_apps():
         assert app["repo"]
         assert app["bundleID"]
         assert app["author"]
+
+
+def test_github_provider_builds_release_url():
+    class FakeResponse:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"tag_name": "v1.2.3"}
+
+    class FakeSession:
+        def get(self, url, timeout):
+            assert url.endswith("/repos/example/app/releases/latest")
+            assert timeout == 15
+            return FakeResponse()
+
+    provider = updater.GITHUB_PROVIDER.__class__(FakeSession())
+    assert provider.latest_release("example/app")["tag_name"] == "v1.2.3"
