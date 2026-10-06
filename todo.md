@@ -11,7 +11,7 @@
 - [x] 補齊 update_source.py 的狀態判定測試
 - [x] 檢查並強化 AltStore Source schema 驗證
 - [x] 檢查各來源失敗時的 fallback 行為
-- [ ] 檢查版本、IPA asset 與檔案大小判定的邊界情況
+- [x] 檢查版本、IPA asset 與檔案大小判定的邊界情況
 
 ## CI / 維護
 - [x] 檢查 GitHub Actions 的更新流程與提交條件
@@ -19,9 +19,9 @@
 - [x] 評估更新頻率、API 使用量與不必要的請求
 
 ## README / Source
-- [ ] 保留並完善更新狀態資訊
+- [x] 保留並完善更新狀態資訊
 - [ ] 評估加入 News / 更新紀錄
-- [ ] 檢查 Source metadata、featuredApps 與 App metadata
+- [x] 檢查 Source metadata、featuredApps 與 App metadata
 
 ## 最後檢核
 - [ ] Python 編譯
