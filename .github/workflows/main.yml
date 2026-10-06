@@ -36,8 +36,11 @@ jobs:
       - name: Run script
         run: python update_source.py
 
-      - name: Validate JSON
+      - name: Validate generated JSON
         run: python -m json.tool apps.json > /dev/null
+
+      - name: Validate app configuration
+        run: python -m json.tool app_config.json > /dev/null
 
       - name: Validate AltStore Source
         run: python validate_source.py
