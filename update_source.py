@@ -5,6 +5,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 from packaging import version as pkg_version
 import requests
+from providers import GitHubProvider, JsonSourceProvider
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -26,6 +27,8 @@ def create_session():
     return session
 
 SESSION = create_session()
+GITHUB_PROVIDER = GitHubProvider(SESSION)
+JSON_PROVIDER = JsonSourceProvider(lambda url: fetch_json(url))
 
 
 def fetch_json(url):
@@ -94,7 +97,7 @@ STATUS_TIMES_END = "<!-- AUTO-UPDATE-STATUS-TIMES:END -->"
 
 
 def fetch_remote():
-    data = fetch_json(SOURCE_DATA_URL)
+    data = JSON_PROVIDER.fetch(SOURCE_DATA_URL)
     return None if data is None else ensure_list(data, "apps")
 
 
@@ -171,9 +174,7 @@ def choose_highest_ytkace_ipa(releases):
 
 def get_latest_special_release(app):
     try:
-        response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases?per_page=30", timeout=15)
-        response.raise_for_status()
-        releases = response.json()
+        releases = GITHUB_PROVIDER.releases(app["repo"], per_page=30)
         candidates = []
         for release in releases if isinstance(releases, list) else []:
             if not isinstance(release, dict) or release.get("draft") or release.get("prerelease"): continue
@@ -204,13 +205,10 @@ def build_from_github(app):
     try:
         data = get_latest_special_release(app) if app.get("name") in {"MaxMusic", "YTKACE"} else None
         if data is None and app.get("name") not in {"MaxMusic", "YTKACE"}:
-            response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases/latest", timeout=15)
-            response.raise_for_status(); data = response.json()
+            data = GITHUB_PROVIDER.latest_release(app["repo"])
         if not data: return None
         if app.get("name") == "YTKACE":
-            response = SESSION.get(f"https://api.github.com/repos/{app['repo']}/releases?per_page=100", timeout=15)
-            response.raise_for_status()
-            selected = choose_highest_ytkace_ipa(response.json())
+            selected = choose_highest_ytkace_ipa(GITHUB_PROVIDER.releases(app["repo"], per_page=100))
             if not selected: return None
             data, ipa = selected
             version_match = re.search(r"(?:youtube|yt)[_\s-]*[vV]?[_\s-]*(\d+\.\d+\.\d+)", str(ipa.get("name", "")), re.IGNORECASE)
@@ -348,7 +346,7 @@ def main():
             previous = find_previous_app({"apps": old_apps}, name=target)
             if previous: apps.append(previous)
             else: print(f"❌ {target}: update failed and no previous version available")
-    sideload_apps = fetch_json(SIDeloadLABS_SOURCE_URL)
+    sideload_apps = JSON_PROVIDER.fetch(SIDeloadLABS_SOURCE_URL)
     built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
     if built: apps.append(built)
     else:
