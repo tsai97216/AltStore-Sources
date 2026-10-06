@@ -124,3 +124,45 @@ def test_github_provider_builds_release_url():
 
     provider = updater.GITHUB_PROVIDER.__class__(FakeSession())
     assert provider.latest_release("example/app")["tag_name"] == "v1.2.3"
+
+
+def test_update_source_apps_single_preserves_other_apps(monkeypatch):
+    old_apps = [
+        {
+            "name": "PiliPlus",
+            "bundleIdentifier": "com.bgg.piliplus",
+            "versions": [{"version": "2.1.6"}],
+        },
+        {
+            "name": "YTKACE",
+            "bundleIdentifier": "com.google.ios.youtube",
+            "versions": [{"version": "21.40.5"}],
+        },
+    ]
+    updated = {
+        "name": "PiliPlus",
+        "bundleIdentifier": "com.bgg.piliplus",
+        "versions": [{"version": "2.1.7"}],
+    }
+    monkeypatch.setattr(updater, "build_single_app", lambda name, apps: updated)
+    result = updater.update_source_apps({}, old_apps, "PiliPlus")
+    by_name = {app["name"]: app for app in result}
+    assert by_name["PiliPlus"]["versions"][0]["version"] == "2.1.7"
+    assert by_name["YTKACE"]["versions"][0]["version"] == "21.40.5"
+    assert len(result) == 2
+
+
+def test_update_source_apps_single_unknown_app():
+    old_apps = [
+        {
+            "name": "PiliPlus",
+            "bundleIdentifier": "com.bgg.piliplus",
+            "versions": [{"version": "2.1.6"}],
+        }
+    ]
+    try:
+        updater.update_source_apps({}, old_apps, "Missing")
+    except ValueError as exc:
+        assert "Unknown app or update failed" in str(exc)
+    else:
+        raise AssertionError("expected ValueError")
