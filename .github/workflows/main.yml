@@ -19,16 +19,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v6
         with:
           python-version: '3.10'
+          cache: pip
 
       - name: Install deps
         run: pip install --disable-pip-version-check --no-input -r requirements.txt
 
       - name: Validate Python
-        run: python -m py_compile update_source.py validate_source.py test_update_source.py
+        run: python -m py_compile update_source.py validate_source.py test_update_source.py test_validate_source.py
 
       - name: Run tests
         run: python -m pytest -q
