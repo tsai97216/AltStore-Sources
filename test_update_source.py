@@ -98,3 +98,11 @@ def test_get_status_updated_at_invalid_block():
 <!-- AUTO-UPDATE-STATUS-TIMES:END -->
 """
     assert updater.get_status_updated_at(readme) == {}
+
+
+def test_app_config_contains_expected_github_apps():
+    assert [app["name"] for app in updater.GITHUB_APPS] == ["PiliPlus", "YTKACE", "MaxMusic"]
+    for app in updater.GITHUB_APPS:
+        assert app["repo"]
+        assert app["bundleID"]
+        assert app["author"]
