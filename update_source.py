@@ -70,6 +70,7 @@ def ensure_list(data, key=None):
         return value if isinstance(value, list) else []
     return []
 
+
 APP_CONFIG_FILENAME = "app_config.json"
 
 def load_app_config():
@@ -225,7 +226,8 @@ def build_from_github(app):
             version_name = normalize_version(app["name"], raw_version.lstrip("v"))
         download_url, size = ipa.get("browser_download_url"), ipa.get("size", 0)
         if not version_name or not download_url or not validate_download_url(download_url, size): return None
-        return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": format_app_subtitle(app["subtitle"], (data.get("published_at") or "")[:10]), "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": (data.get("published_at") or "")[:10], "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
+        version_date = (data.get("published_at") or data.get("created_at") or "")[:10]
+        return {"name": app["name"], "bundleIdentifier": app["bundleID"], "developerName": app["author"], "subtitle": format_app_subtitle(app["subtitle"], version_date), "localizedDescription": app["desc"], "iconURL": app["icon"], "tintColor": app["color"], "category": app.get("category", "entertainment"), "screenshots": [], "versions": [{"version": version_name, "date": version_date, "localizedDescription": (data.get("body") or "")[:500], "downloadURL": download_url, "size": size}]}
     except (requests.RequestException, ValueError):
         return None
 
@@ -254,6 +256,7 @@ def build_from_sideloadlabs(apps):
             "size": size,
         }],
     }
+
 
 def build_from_apptesters(app):
     if not isinstance(app, dict): return None
@@ -306,14 +309,27 @@ def get_app_meta(name):
     return ("AppTesters", APPT_ESTERS_REPO_URL) if name in TARGET_APPS else ("Unknown", "")
 
 
+def format_app_update_time(app, status_times, checked_at):
+    name = app.get("name", "Unknown")
+    exact_time = status_times.get(name)
+    if exact_time and is_updated_within_day(exact_time, checked_at):
+        return f"🟢 **{exact_time}**"
+    date = ((app.get("versions") or [{}])[0]).get("date", "N/A")
+    return date or "N/A"
+
+
 def update_readme(apps, checked_at, content_updated_at, statuses, status_times):
     path = Path(README_FILENAME); readme = path.read_text(encoding="utf-8") if path.exists() else "# Chi Sources\n"
-    rows = ["| App | 原作者 |", "| --- | --- |"]
+    rows = ["| App | 原倉庫 | 上次更新 |", "| --- | --- | --- |"]
     for app in apps:
-        author, url = get_app_meta(app.get("name", "Unknown")); rows.append(f"| **{app.get('name', 'Unknown')}** | [{author}]({url}) |" if url else f"| **{app.get('name', 'Unknown')}** | {author} |")
+        name = app.get("name", "Unknown")
+        author, url = get_app_meta(name)
+        app_link = f"[{name}]({url})" if url else name
+        rows.append(f"| **{app_link}** | {author} | {format_app_update_time(app, status_times, checked_at)} |")
     status_rows = ["| App | 狀態 | 最新版本 | 版本日期 |", "| --- | --- | --- | --- |"]
     for app in apps:
-        latest = (app.get("versions") or [{}])[0]; status_rows.append(f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
+        latest = (app.get("versions") or [{}])[0]
+        status_rows.append(f"| {app.get('name', 'Unknown')} | {statuses.get(app.get('name'), '⚪ Unchanged')} | {latest.get('version', 'N/A')} | {latest.get('date', 'N/A')} |")
     status = "\n".join([STATUS_START, "## 更新狀態", f"- **最近自動檢查：** {checked_at}（台灣時間）", f"- **最近內容更新：** {content_updated_at}（台灣時間）", "", *status_rows, "", STATUS_END])
     status_times_block = "\n".join([
         STATUS_TIMES_START,
@@ -333,10 +349,7 @@ def update_readme(apps, checked_at, content_updated_at, statuses, status_times):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Update Chi Sources")
-    parser.add_argument(
-        "--app",
-        help="Only update the specified app. Omit to update all apps.",
-    )
+    parser.add_argument("--app", help="Only update the specified app. Omit to update all apps.")
     return parser.parse_args()
 
 
@@ -344,17 +357,12 @@ def build_single_app(target_name, old_apps):
     config = next((app for app in GITHUB_APPS if app.get("name") == target_name), None)
     if config:
         built = build_from_github(config)
-        if built:
-            return built
+        if built: return built
         return find_previous_app({"apps": old_apps}, bundle_id=config["bundleID"])
 
     if target_name in TARGET_APPS:
         remote_apps = fetch_remote()
-        match = next(
-            (app for app in remote_apps or []
-             if isinstance(app, dict) and app.get("name") == target_name),
-            None,
-        )
+        match = next((app for app in remote_apps or [] if isinstance(app, dict) and app.get("name") == target_name), None)
         built = build_from_apptesters(match) if match else None
         return built or find_previous_app({"apps": old_apps}, name=target_name)
 
@@ -371,64 +379,42 @@ def update_source_apps(old_source, old_apps, target_name=None):
         apps = []
         for config in GITHUB_APPS:
             built = build_from_github(config)
-            if built:
-                apps.append(built)
+            if built: apps.append(built)
             else:
                 previous = find_previous_app({"apps": old_apps}, bundle_id=config["bundleID"])
-                if previous:
-                    apps.append(previous)
-                else:
-                    print(f"❌ {config['name']}: update failed and no previous version available")
+                if previous: apps.append(previous)
+                else: print(f"❌ {config['name']}: update failed and no previous version available")
 
         remote_apps = fetch_remote()
         for target in TARGET_APPS:
-            match = next(
-                (app for app in remote_apps or []
-                 if isinstance(app, dict) and app.get("name") == target),
-                None,
-            )
+            match = next((app for app in remote_apps or [] if isinstance(app, dict) and app.get("name") == target), None)
             built = build_from_apptesters(match) if match else None
-            if built:
-                apps.append(built)
+            if built: apps.append(built)
             else:
                 previous = find_previous_app({"apps": old_apps}, name=target)
-                if previous:
-                    apps.append(previous)
-                else:
-                    print(f"❌ {target}: update failed and no previous version available")
+                if previous: apps.append(previous)
+                else: print(f"❌ {target}: update failed and no previous version available")
 
         sideload_apps = JSON_PROVIDER.fetch(SIDeloadLABS_SOURCE_URL)
         built = build_from_sideloadlabs(ensure_list(sideload_apps, "apps"))
-        if built:
-            apps.append(built)
+        if built: apps.append(built)
         else:
             previous = find_previous_app({"apps": old_apps}, name=SIDELOADLABS_DISPLAY_NAME)
-            if previous:
-                apps.append(previous)
-            else:
-                print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
+            if previous: apps.append(previous)
+            else: print(f"❌ {SIDELOADLABS_DISPLAY_NAME}: update failed and no previous version available")
         return keep_latest_only(apps)
 
     if target_name == "all":
         return update_source_apps(old_source, old_apps)
 
     updated = build_single_app(target_name, old_apps)
-    if not updated:
-        raise ValueError(f"Unknown app or update failed: {target_name}")
+    if not updated: raise ValueError(f"Unknown app or update failed: {target_name}")
 
     target_bundle = updated.get("bundleIdentifier")
-    target_index = next(
-        (i for i, app in enumerate(old_apps)
-         if isinstance(app, dict)
-         and ((target_bundle and app.get("bundleIdentifier") == target_bundle)
-              or app.get("name") == target_name)),
-        None,
-    )
+    target_index = next((i for i, app in enumerate(old_apps) if isinstance(app, dict) and ((target_bundle and app.get("bundleIdentifier") == target_bundle) or app.get("name") == target_name)), None)
     apps = list(old_apps)
-    if target_index is None:
-        apps.append(updated)
-    else:
-        apps[target_index] = updated
+    if target_index is None: apps.append(updated)
+    else: apps[target_index] = updated
     return keep_latest_only(apps)
 
 
