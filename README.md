@@ -26,4 +26,8 @@ https://altstore.chi.qzz.io
 - **最近自動檢查：** 2026-10-07 06:25:46（台灣時間）
 - **最近內容更新：** 2026-10-06 01:53:19（台灣時間）
 
-<!-- AUTO-UPDATE-STATUS-END -->
+<!-- AUTO-UPDATE-STATUS:END -->
+
+<!-- AUTO-UPDATE-STATUS-TIMES:START -->
+<!-- {} -->
+<!-- AUTO-UPDATE-STATUS-TIMES:END -->
