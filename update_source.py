@@ -14,7 +14,7 @@ FILENAME = "apps.json"
 README_FILENAME = "README.md"
 YOUR_GITHUB_ID = "tsai97216"
 DISPLAY_NAME = "Chi Source"
-SOURCE_URL = "https://altstore.chi.qzz.io"
+SOURCE_URL = "https://ipa.chi.qzz.io"
 SOURCE_ICON_URL = f"https://raw.githubusercontent.com/{YOUR_GITHUB_ID}/chi-source/main/source_icon.png"
 SOURCE_DESCRIPTION = "iOS IPA Source"
 
@@ -487,7 +487,7 @@ def main():
     content_changed = json.dumps(apps, ensure_ascii=False, sort_keys=True) != json.dumps(old_apps, ensure_ascii=False, sort_keys=True)
     content_updated_at = checked_at if content_changed else previous_content_update
     source = dict(old_source) if isinstance(old_source, dict) else {}
-    source.update({"name": DISPLAY_NAME, "identifier": "chi-source", "sourceURL": SOURCE_URL, "subtitle": "Chi's IPA Source", "description": SOURCE_DESCRIPTION, "website": "https://altstore.chi.qzz.io", "iconURL": SOURCE_ICON_URL, "featuredApps": [app["bundleIdentifier"] for app in apps], "apps": apps, "news": source.get("news", [])})
+    source.update({"name": DISPLAY_NAME, "identifier": "chi-source", "sourceURL": SOURCE_URL, "subtitle": "Chi's IPA Source", "description": SOURCE_DESCRIPTION, "website": "https://ipa.chi.qzz.io", "iconURL": SOURCE_ICON_URL, "featuredApps": [app["bundleIdentifier"] for app in apps], "apps": apps, "news": source.get("news", [])})
     Path(FILENAME).write_text(json.dumps(source, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     statuses = {}
     status_times = {}
