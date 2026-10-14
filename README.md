@@ -5,7 +5,7 @@ AltStore / SideStore Source。
 ## Source
 
 ```
-https://altstore.chi.qzz.io
+https://ipa.chi.qzz.io
 ```
 
 <!-- AUTO-UPDATE-APPS:START -->
